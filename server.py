@@ -142,6 +142,84 @@ class ZeptoAPIRequestHandler(SimpleHTTPRequestHandler):
         # Serve static files for all other paths
         super().do_GET()
 
+    def do_POST(self):
+        parsed_url = urllib.parse.urlparse(self.path)
+        
+        if parsed_url.path == "/api/cart/evaluate":
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                body = json.loads(post_data.decode('utf-8'))
+            except Exception:
+                body = {}
+
+            user_segment = body.get("userSegment", "stalled_non_grocery_shopper")
+            cart_items = body.get("cartItems", [])
+
+            # Guardrail: Only evaluate for Stalled Shoppers
+            if user_segment != "stalled_non_grocery_shopper" or not cart_items:
+                self.send_json_response({"recommendation_required": False, "recommendation": None})
+                return
+
+            has_grocery = any(item.get("category") in ["Grocery", "Fresh & Daily Staples", "Packaged Foods & Snacks"] or str(item.get("id")).startswith("g") for item in cart_items)
+            non_grocery_item = next((item for item in cart_items if item.get("category") not in ["Grocery", "Fresh & Daily Staples", "Packaged Foods & Snacks"] and not str(item.get("id")).startswith("g")), None)
+
+            # MULTI-CATEGORY CASE (Option B)
+            if has_grocery and non_grocery_item:
+                ng_name = str(non_grocery_item.get("name", "")).lower()
+                ng_id = str(non_grocery_item.get("id", ""))
+
+                if "kneader" in ng_name or "hku_001" in ng_id:
+                    self.send_json_response({
+                        "recommendation_required": True,
+                        "recommendation": {
+                            "id": "rec_mat_001",
+                            "product_name": "Silicone Non-Stick Dough & Roti Kneading Mat",
+                            "price": 199,
+                            "contextual_bridge": f"Pair with your {non_grocery_item.get('name')}: Keep countertops clean & dough fresh!",
+                            "trust_shield": {
+                                "spec_summary": "Food Grade Silicone | Non-Slip Surface | Easy Wash",
+                                "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
+                            }
+                        }
+                    })
+                    return
+                elif "cable" in ng_name or "usb" in ng_name or "ng_tech_2" in ng_id:
+                    self.send_json_response({
+                        "recommendation_required": True,
+                        "recommendation": {
+                            "id": "rec_tech_101",
+                            "product_name": "PowerPulse 25W Fast Wall Adapter",
+                            "price": 399,
+                            "contextual_bridge": f"Pair with your {non_grocery_item.get('name')}: Pair with a 20W adapter for maximum charging speed",
+                            "trust_shield": {
+                                "spec_summary": "20W PD Output | Type-C Port | Surge Protection",
+                                "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
+                            }
+                        }
+                    })
+                    return
+                else:
+                    # SILENT COLLAPSE: Goal achieved, no direct companion found
+                    self.send_json_response({"recommendation_required": False, "recommendation": None})
+                    return
+
+            # Single-Category Grocery Cart Fallback
+            self.send_json_response({
+                "recommendation_required": True,
+                "recommendation": {
+                    "id": "rec_tech_101",
+                    "product_name": "PowerPulse 25W Super Fast Adapter",
+                    "price": 899,
+                    "contextual_bridge": "✅ 100% Verified for your device — 25W PD Fast Charging with Overheating Protection.",
+                    "trust_shield": {
+                        "spec_summary": "25W PD Output | USB Type-C Port | Surge & Overheat Protection",
+                        "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
+                    }
+                }
+            })
+            return
+
     def send_json_response(self, data, status_code=200):
         body = json.dumps(data).encode("utf-8")
         self.send_response(status_code)

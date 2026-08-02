@@ -261,22 +261,25 @@ function runAIRecommendationEngine(summary) {
     return;
   }
 
-  const response = matcher.getRecommendation(summary, activeSearchQuery);
+  // Evaluate cart using Option B Direct Companion Logic & Silent Collapse
+  const response = matcher.evaluateCart(summary, "stalled_non_grocery_shopper");
 
-  if (response && response.recommendation) {
+  if (response && response.recommendation_required && response.recommendation) {
     currentRecommendation = response;
     const rec = response.recommendation;
 
     DOM.aiRecommendationText.textContent = rec.contextual_bridge;
-    DOM.aiItemIcon.textContent = rec.image || "🔌";
+    DOM.aiItemIcon.textContent = rec.image || "✨";
     DOM.aiItemName.textContent = rec.product_name || rec.name;
     DOM.aiItemPrice.textContent = `₹${rec.price}`;
 
     DOM.aiSuggestionNudge.style.display = "block";
     logDebug("AI Engine", `Nudge card displayed: ${rec.product_name}`, "matcher");
   } else {
+    // SILENT COLLAPSE: Hide AI Assistant card completely
     if (DOM.aiSuggestionNudge) DOM.aiSuggestionNudge.style.display = "none";
     currentRecommendation = null;
+    logDebug("AI Engine", "Silent collapse triggered: Hiding AI card", "info");
   }
 }
 

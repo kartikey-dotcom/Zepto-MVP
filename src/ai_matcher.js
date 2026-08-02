@@ -1,4 +1,93 @@
-// Zepto AI Cross-Category Assistant - Granular Friction-Solving Recommendation Engine
+// Zepto AI Cross-Category Assistant - Direct Companion & Multi-Category Logic Engine
+
+// Direct Companion Matrix (Key = Non-Grocery Item ID or Keyword)
+const DIRECT_COMPANION_MATRIX = {
+  // Dough Kneader / Kitchen Appliances
+  "hku_001": {
+    id: "rec_mat_001",
+    name: "Silicone Non-Stick Dough & Roti Kneading Mat",
+    price: 199,
+    mrp: 399,
+    image: "🫓",
+    benefit_text: "Keep countertops clean & dough fresh!",
+    specs: "Food Grade Silicone | Non-Slip Surface | Easy Wash"
+  },
+  "rec_home_105": {
+    id: "rec_mat_001",
+    name: "Silicone Non-Stick Dough & Roti Kneading Mat",
+    price: 199,
+    mrp: 399,
+    image: "🫓",
+    benefit_text: "Keep countertops clean & dough fresh!",
+    specs: "Food Grade Silicone | Non-Slip Surface | Easy Wash"
+  },
+  // Cables / Tech / Chargers
+  "ng_tech_2": {
+    id: "rec_tech_101",
+    name: "PowerPulse 25W Fast Wall Adapter",
+    price: 399,
+    mrp: 699,
+    image: "🔌",
+    benefit_text: "Pair with a 20W adapter for maximum charging speed",
+    specs: "20W PD Output | Type-C Port | Surge Protection"
+  },
+  "g8": {
+    id: "rec_tech_101",
+    name: "PowerPulse 25W Fast Wall Adapter",
+    price: 399,
+    mrp: 699,
+    image: "🔌",
+    benefit_text: "Pair with a 20W adapter for maximum charging speed",
+    specs: "20W PD Output | Type-C Port | Surge Protection"
+  },
+  // Face Wash / Cleanser / Skincare
+  "pcb_002": {
+    id: "rec_beauty_111",
+    name: "The Derma Co 1% Hyaluronic Sunscreen Aqua Gel",
+    price: 349,
+    mrp: 499,
+    image: "🧴",
+    benefit_text: "Lock in hydration post-cleansing",
+    specs: "SPF 50 PA++++ | 1% Hyaluronic Acid | Non-Greasy"
+  },
+  "ng_beauty_1": {
+    id: "pcb_002",
+    name: "CeraVe Hydrating Facial Cleanser 236ml",
+    price: 750,
+    mrp: 899,
+    image: "🧴",
+    benefit_text: "Cleanse skin gently before applying sunscreen",
+    specs: "Essential Ceramides 1, 3, 6-II | Fragrance-Free"
+  },
+  // Binge Snacks / Chips
+  "g7": {
+    id: "rec_hygiene_109",
+    name: "Himalaya Gentle Wet Wipes (15s Pack)",
+    price: 49,
+    mrp: 60,
+    image: "🧼",
+    benefit_text: "Keep hands & controller grease-free",
+    specs: "100% Alcohol-Free | Aloe Vera Enriched | 15 Wipes"
+  }
+};
+
+function getDirectAccessoryByKeyword(nonGroceryItem) {
+  const text = (nonGroceryItem.name + " " + (nonGroceryItem.category || "")).toLowerCase();
+  
+  if (text.includes("kneader") || text.includes("cooker") || text.includes("pan") || text.includes("kettle")) {
+    return DIRECT_COMPANION_MATRIX["hku_001"];
+  }
+  if (text.includes("cable") || text.includes("usb") || text.includes("phone") || text.includes("charger")) {
+    return DIRECT_COMPANION_MATRIX["ng_tech_2"];
+  }
+  if (text.includes("cleanser") || text.includes("face wash") || text.includes("serum")) {
+    return DIRECT_COMPANION_MATRIX["pcb_002"];
+  }
+  if (text.includes("chips") || text.includes("doritos") || text.includes("lays")) {
+    return DIRECT_COMPANION_MATRIX["g7"];
+  }
+  return null;
+}
 
 const FRICTION_SOLVING_PAIRS = [
   {
@@ -15,7 +104,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "25W PD Output | USB Type-C Port | Surge & Overheat Protection",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "No hassle returns. If defective or incompatible, rider swaps it instantly at your doorstep."
       }
     }
@@ -34,7 +123,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "20W PD Output | Apple Lightning & Type-C Compatible | BIS Certified",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "100% Genuine Apple Accessory. If defective, rider replaces it in 10 mins."
       }
     }
@@ -53,7 +142,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "10000mAh Lithium Polymer | 18W Dual Output | 12-Layer Circuit Protection",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "Rider swaps incompatible or damaged power bank at your doorstep in 10 mins."
       }
     }
@@ -72,7 +161,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "Anti-Fray Stitched Edges | Non-Slip Rubber Base | Washable Fabric",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "Quality checked item. Instant replacement if size or texture is not as expected."
       }
     }
@@ -91,7 +180,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "3L Food Grade Stainless Steel | 350W Copper Motor | Easy Clean",
         dark_store_status: "Quality Checked & Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "100% Quality Inspected. Defective or damaged items swapped at your doorstep in 10 mins."
       }
     }
@@ -110,7 +199,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "BPA-Free Food Grade Plastic | Airtight Silicone Seal | Stackable 6 Pack",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "If containers arrive cracked or broken, rider replaces set at doorstep in 10 mins."
       }
     }
@@ -129,7 +218,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "Heat Resistant Silicone | Measurement Markings | Easy Washable",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "Instant doorstep replacement if mat is damaged or defective."
       }
     }
@@ -148,7 +237,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "1L Capacity | 18/8 Stainless Steel | 24 Hours Hot & Cold Insulation",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "Tested vacuum seal. Rider replaces defective flask at doorstep in 10 mins."
       }
     }
@@ -167,7 +256,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "100% Alcohol-Free | Hypoallergenic Aloe Vera | 72 Extra Moist Wipes",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "Instant hassle-free doorstep exchange guarantee on all hygiene products."
       }
     }
@@ -186,7 +275,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "5W RMS HD Sound | 10 Hours Playtime | IPX7 Sweat & Splashproof",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "If audio or pairing is defective, rider replaces it at your doorstep in 10 mins."
       }
     }
@@ -205,7 +294,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "SPF 50 PA++++ | 1% Hyaluronic Acid | Zero White Cast & Non-Greasy",
         dark_store_status: "Dermatologically Tested & Verified at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "If damaged or seal broken upon delivery, rider replaces it in 10 mins."
       }
     }
@@ -224,7 +313,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "Olive Oil & Almond Oil enriched | Hypoallergenic | Paraben Free",
         dark_store_status: "Pediatrician Tested & Verified at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "Rider replaces damaged baby care bottles instantly at doorstep."
       }
     }
@@ -243,7 +332,7 @@ const FRICTION_SOLVING_PAIRS = [
       trust_shield: {
         spec_summary: "100% Rawhide Chews | High Protein | Reduces Tartar & Plaque Build-Up",
         dark_store_status: "Verified in Stock at Dark Store #204",
-        return_policy_title: "10-Minute Doorstep Replacement Guarantee",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
         return_policy_summary: "100% Fresh pet treats guarantee. Replacement available at doorstep."
       }
     }
@@ -258,8 +347,70 @@ export class ZeptoAIMatcher {
   resetSession() {}
 
   /**
-   * Dynamically evaluates active cart items & search query to return practical, friction-solving recommendations
-   * with explicit Trust & Return Policy metadata.
+   * Option B: Multi-Category Direct Companion & Evaluation Logic (/api/cart/evaluate)
+   */
+  evaluateCart(cartSummary, userSegment = "stalled_non_grocery_shopper") {
+    if (!cartSummary || cartSummary.itemsCount === 0) {
+      return { recommendation_required: false, recommendation: null };
+    }
+
+    if (userSegment !== "stalled_non_grocery_shopper") {
+      return { recommendation_required: false, recommendation: null };
+    }
+
+    const cartItems = cartSummary.items.map(e => e.item);
+
+    const isGrocery = (item) => {
+      const cat = (item.category || "").toLowerCase();
+      const id = (item.id || "").toLowerCase();
+      return cat.includes("grocery") || cat.includes("staples") || cat.includes("packaged") || cat.includes("snacks") || id.startsWith("g");
+    };
+
+    const hasGrocery = cartItems.some(item => isGrocery(item));
+    const nonGroceryItem = cartItems.find(item => !isGrocery(item));
+
+    // --- MULTI-CATEGORY CASE (OPTION B) ---
+    if (hasGrocery && nonGroceryItem) {
+      const directAccessory = DIRECT_COMPANION_MATRIX[nonGroceryItem.id] || getDirectAccessoryByKeyword(nonGroceryItem);
+
+      if (directAccessory && !cartSummary.itemIds.includes(directAccessory.id)) {
+        return {
+          recommendation_required: true,
+          recommendation: {
+            id: directAccessory.id,
+            product_name: directAccessory.name,
+            price: directAccessory.price,
+            mrp: directAccessory.mrp,
+            image: directAccessory.image || "✨",
+            contextual_bridge: `Pair with your ${nonGroceryItem.name}: ${directAccessory.benefit_text}`,
+            trust_shield: {
+              spec_summary: directAccessory.specs,
+              dark_store_status: "Verified in Stock at Dark Store #204",
+              return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+              return_policy_summary: "No hassle returns. Rider swaps defective items instantly at doorstep."
+            }
+          }
+        };
+      } else {
+        // SILENT COLLAPSE: Non-grocery goal achieved, no direct companion found
+        return { recommendation_required: false, recommendation: null };
+      }
+    }
+
+    // --- STANDARD SINGLE-CATEGORY GROCERY CART LOGIC ---
+    const rec = this.getRecommendation(cartSummary);
+    if (rec && rec.recommendation) {
+      return {
+        recommendation_required: true,
+        recommendation: rec.recommendation
+      };
+    }
+
+    return { recommendation_required: false, recommendation: null };
+  }
+
+  /**
+   * Evaluates active cart items & search query for standard single-category cases
    */
   getRecommendation(cartSummary, searchQuery = "") {
     if (!cartSummary || cartSummary.itemsCount === 0) {
@@ -269,7 +420,6 @@ export class ZeptoAIMatcher {
     const cleanQuery = searchQuery.trim().toLowerCase();
     const isAlreadyInCart = (rec) => cartSummary.itemIds.includes(rec.id);
 
-    // Get latest added item in cart
     const lastCartEntry = cartSummary.items[cartSummary.items.length - 1];
     const lastItem = lastCartEntry ? lastCartEntry.item : null;
 
@@ -292,7 +442,7 @@ export class ZeptoAIMatcher {
       );
     }
 
-    // 3. DYNAMIC DETERMINISTIC ROTATION FALLBACK (Prevents repeat single fallback)
+    // 3. DYNAMIC ROTATION FALLBACK
     if (!selectedPair) {
       const key = lastItem ? (lastItem.id + lastItem.name) : "default";
       let hash = 0;
