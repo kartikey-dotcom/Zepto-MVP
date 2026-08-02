@@ -10,30 +10,24 @@ const matcher = new ZeptoAIMatcher({ stockVerificationRequired: true });
 // Track active search query context
 let activeSearchQuery = "";
 let currentRecommendation = null;
+let activeCategory = "All";
 
 // --- DOM Cache ---
 const DOM = {
-  // Scenario Preset Buttons
-  presetSamsung: document.getElementById("preset-samsung"),
-  presetBreakfast: document.getElementById("preset-breakfast"),
-  presetDinner: document.getElementById("preset-dinner"),
-  presetParty: document.getElementById("preset-party"),
-  btnClearScenario: document.getElementById("btn-clear-scenario"),
-
   // Search
   simSearchInput: document.getElementById("sim-search-input"),
   btnSearchSim: document.getElementById("btn-search-sim"),
   appSearchInput: document.getElementById("app-search-input"),
   searchResultsDropdown: document.getElementById("search-results-dropdown"),
 
-  // Left Panel Lists & Logs
-  quickCatalogList: document.getElementById("quick-catalog-list"),
-  debugMessages: document.getElementById("debug-messages"),
-  debugTimestamp: document.getElementById("debug-timestamp"),
-  debugLogBox: document.getElementById("debug-log-box"),
+  // Category Rail
+  categoryRail: document.getElementById("category-rail"),
+
+  // Popular Essentials Grid
+  popularSection: document.getElementById("popular-essentials-section"),
+  popularGrid: document.getElementById("popular-products-grid"),
 
   // Mobile App screen state views
-  cartEmptyView: document.getElementById("cart-empty-view"),
   cartSectionHeader: document.getElementById("cart-section-header"),
   clearCartLink: document.getElementById("clear-cart-link"),
   cartItemsList: document.getElementById("cart-items-list"),
@@ -45,7 +39,6 @@ const DOM = {
   // Bill components
   billSubtotal: document.getElementById("bill-subtotal"),
   billDeliveryFee: document.getElementById("bill-delivery-fee"),
-  billHandlingFee: document.getElementById("bill-handling-fee"),
   billGrandTotal: document.getElementById("bill-grand-total"),
   checkoutTotalPrice: document.getElementById("checkout-total-price"),
   btnPlaceOrder: document.getElementById("btn-place-order"),
@@ -77,7 +70,6 @@ function updatePhoneClock() {
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   if (DOM.phoneTime) DOM.phoneTime.textContent = `${hours}:${minutes}`;
-  if (DOM.debugTimestamp) DOM.debugTimestamp.textContent = `${hours}:${minutes}:${String(now.getSeconds()).padStart(2, '0')}`;
 }
 setInterval(updatePhoneClock, 1000);
 updatePhoneClock();
@@ -85,90 +77,105 @@ updatePhoneClock();
 // --- Logger Helper ---
 function logDebug(module, message, type = "info") {
   console.log(`[${module}] ${message}`);
-  if (!DOM.debugMessages || !DOM.debugLogBox) return;
-  const now = new Date();
-  const timeStr = now.toTimeString().split(' ')[0];
-  const prefix = `[${timeStr}] [${module}] `;
-  let color = "#abb2dd"; // default info color
-  
-  if (type === "success") color = "#00ff88";
-  if (type === "warning") color = "#ff9f43";
-  if (type === "matcher") color = "#a29bfe";
-  
-  const msgEl = document.createElement("div");
-  msgEl.style.color = color;
-  msgEl.style.marginBottom = "4px";
-  msgEl.innerHTML = `<span style="opacity: 0.6;">${prefix}</span>${message}`;
-  
-  // Append & auto-scroll
-  DOM.debugMessages.appendChild(msgEl);
-  DOM.debugLogBox.scrollTop = DOM.debugLogBox.scrollHeight;
 }
 
-// --- Render Quick Add Catalog (Left Side) ---
-function renderCatalog() {
-  if (!DOM.quickCatalogList) return;
-  DOM.quickCatalogList.innerHTML = "";
-  GROCERY_ITEMS.forEach(item => {
+// Toast notification display helper
+function showToast(message) {
+  if (!DOM.cartToastNotif) return;
+  DOM.cartToastNotif.textContent = message;
+  DOM.cartToastNotif.classList.add("show");
+  setTimeout(() => {
+    DOM.cartToastNotif.classList.remove("show");
+  }, 2500);
+}
+
+// --- Render Popular Essentials Grid ---
+function renderPopularEssentials(categoryFilter = "All") {
+  if (!DOM.popularGrid) return;
+  
+  const allProducts = [...GROCERY_ITEMS, ...NON_GROCERY_CATALOG];
+  let filtered = allProducts;
+  
+  if (categoryFilter !== "All") {
+    filtered = allProducts.filter(item => 
+      item.category === categoryFilter || 
+      (item.tags && item.tags.includes(categoryFilter.toLowerCase()))
+    );
+  }
+
+  DOM.popularGrid.innerHTML = "";
+  filtered.slice(0, 6).forEach(item => {
     const card = document.createElement("div");
-    card.className = "catalog-item-card";
+    card.className = "essential-card";
+    card.setAttribute("data-id", item.id);
     card.innerHTML = `
-      <div class="catalog-item-info">
-        <span class="catalog-item-icon">${item.image}</span>
-        <div>
-          <div class="catalog-item-name">${item.name}</div>
-          <div class="catalog-item-price">₹${item.price} • ${item.unit}</div>
+      <div class="essential-icon">${item.image}</div>
+      <div class="essential-info">
+        <span class="essential-title">${item.name}</span>
+        <span class="essential-unit">${item.unit || "1 Unit"}</span>
+        <div class="essential-price-row">
+          <span class="essential-price">₹${item.price}</span>
+          ${item.mrp ? `<span class="essential-mrp">₹${item.mrp}</span>` : ""}
         </div>
       </div>
-      <button class="btn-add-quick" data-id="${item.id}">+ Add</button>
+      <button class="btn-add-green" data-id="${item.id}">+ ADD</button>
     `;
-    DOM.quickCatalogList.appendChild(card);
+    DOM.popularGrid.appendChild(card);
   });
+}
 
-  // Attach quick-add listeners
-  DOM.quickCatalogList.addEventListener("click", e => {
-    if (e.target.classList.contains("btn-add-quick")) {
+// --- Category Rail Listener ---
+if (DOM.categoryRail) {
+  DOM.categoryRail.addEventListener("click", e => {
+    if (e.target.classList.contains("cat-pill")) {
+      DOM.categoryRail.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
+      e.target.classList.add("active");
+      
+      const cat = e.target.getAttribute("data-cat");
+      activeCategory = cat;
+      renderPopularEssentials(cat);
+      logDebug("CategoryRail", `Filter active category: ${cat}`);
+    }
+  });
+}
+
+// Handle "+ ADD" clicks on Popular Essentials grid
+if (DOM.popularGrid) {
+  DOM.popularGrid.addEventListener("click", e => {
+    if (e.target.classList.contains("btn-add-green")) {
       const id = e.target.getAttribute("data-id");
-      const item = GROCERY_ITEMS.find(g => g.id === id);
+      let item = GROCERY_ITEMS.find(g => g.id === id);
+      if (!item) {
+        item = NON_GROCERY_CATALOG.find(ng => ng.id === id);
+      }
+      
       if (item) {
         cart.addItem(item, 1);
         showToast(`Added ${item.name} to cart!`);
-        logDebug("Cart", `Added ${item.name} (₹${item.price})`, "success");
+        logDebug("Cart", `Added product from popular grid: ${item.name} (₹${item.price})`, "success");
       }
     }
   });
 }
 
-// --- Toast Notification ---
-function showToast(message) {
-  DOM.cartToastNotif.textContent = message;
-  DOM.cartToastNotif.classList.add("show");
-  setTimeout(() => {
-    DOM.cartToastNotif.classList.remove("show");
-  }, 2000);
-}
-
-// --- Render Cart (Right Side inside Mobile) ---
+// --- Render Cart inside Mobile App ---
 function renderCart(summary) {
-  // Toggle layout based on cart volume
   if (summary.itemsCount === 0) {
-    DOM.cartEmptyView.style.display = "flex";
-    DOM.cartSectionHeader.style.display = "none";
-    DOM.cartItemsList.style.display = "none";
-    DOM.cartBillView.style.display = "none";
-    DOM.cartActionBar.style.display = "none";
-    DOM.aiSuggestionNudge.style.display = "none";
+    if (DOM.cartSectionHeader) DOM.cartSectionHeader.style.display = "none";
+    if (DOM.cartItemsList) DOM.cartItemsList.style.display = "none";
+    if (DOM.cartBillView) DOM.cartBillView.style.display = "none";
+    if (DOM.cartActionBar) DOM.cartActionBar.style.display = "none";
+    if (DOM.aiSuggestionNudge) DOM.aiSuggestionNudge.style.display = "none";
     currentRecommendation = null;
     return;
   }
 
-  DOM.cartEmptyView.style.display = "none";
-  DOM.cartSectionHeader.style.display = "flex";
-  DOM.cartItemsList.style.display = "flex";
-  DOM.cartBillView.style.display = "flex";
-  DOM.cartActionBar.style.display = "flex";
+  if (DOM.cartSectionHeader) DOM.cartSectionHeader.style.display = "flex";
+  if (DOM.cartItemsList) DOM.cartItemsList.style.display = "flex";
+  if (DOM.cartBillView) DOM.cartBillView.style.display = "flex";
+  if (DOM.cartActionBar) DOM.cartActionBar.style.display = "flex";
 
-  // Render product rows (Cards)
+  // Render cart product rows
   DOM.cartItemsList.innerHTML = "";
   summary.items.forEach(entry => {
     const row = document.createElement("div");
@@ -177,7 +184,7 @@ function renderCart(summary) {
       <div class="item-visual">${entry.item.image}</div>
       <div class="item-details">
         <span class="item-title">${entry.item.name}</span>
-        <span class="item-subtitle">₹${entry.item.price}</span>
+        <span class="item-subtitle">₹${entry.item.price} • ${entry.item.unit || "1 Unit"}</span>
       </div>
       <div class="item-row-right">
         <div class="qty-control">
@@ -191,94 +198,90 @@ function renderCart(summary) {
   });
 
   // Render bill details
-  DOM.billSubtotal.textContent = `₹${summary.subtotal}`;
+  if (DOM.billSubtotal) DOM.billSubtotal.textContent = `₹${summary.subtotal}`;
   
-  if (summary.deliveryFee === 0) {
-    DOM.billDeliveryFee.textContent = "FREE";
-    DOM.billDeliveryFee.className = "bill-value free";
-  } else {
-    DOM.billDeliveryFee.textContent = `₹${summary.deliveryFee}`;
-    DOM.billDeliveryFee.className = "bill-value";
+  if (DOM.billDeliveryFee) {
+    if (summary.deliveryFee === 0) {
+      DOM.billDeliveryFee.textContent = "FREE";
+      DOM.billDeliveryFee.className = "bill-value free";
+    } else {
+      DOM.billDeliveryFee.textContent = `₹${summary.deliveryFee}`;
+      DOM.billDeliveryFee.className = "bill-value";
+    }
   }
   
-  DOM.billGrandTotal.textContent = `₹${summary.total}`;
-  DOM.checkoutTotalPrice.textContent = `₹${summary.total}`;
+  if (DOM.billGrandTotal) DOM.billGrandTotal.textContent = `₹${summary.total}`;
+  if (DOM.checkoutTotalPrice) DOM.checkoutTotalPrice.textContent = `₹${summary.total}`;
 }
 
-// Handle cart quantity modification clicks inside mobile shell
-DOM.cartItemsList.addEventListener("click", e => {
-  if (e.target.classList.contains("btn-plus")) {
-    const id = e.target.getAttribute("data-id");
-    const entry = cart.items.find(entry => entry.item.id === id);
-    if (entry) {
-      cart.updateQuantity(id, entry.quantity + 1);
-      logDebug("Cart", `Incremented quantity of ${entry.item.name}`, "info");
+// Handle cart quantity modifications (- 1 +)
+if (DOM.cartItemsList) {
+  DOM.cartItemsList.addEventListener("click", e => {
+    if (e.target.classList.contains("btn-plus")) {
+      const id = e.target.getAttribute("data-id");
+      const entry = cart.items.find(entry => entry.item.id === id);
+      if (entry) {
+        cart.updateQuantity(id, entry.quantity + 1);
+        logDebug("Cart", `Incremented quantity of ${entry.item.name}`);
+      }
+    } else if (e.target.classList.contains("btn-minus")) {
+      const id = e.target.getAttribute("data-id");
+      const entry = cart.items.find(entry => entry.item.id === id);
+      if (entry) {
+        cart.updateQuantity(id, entry.quantity - 1);
+        logDebug("Cart", `Decremented quantity of ${entry.item.name}`);
+      }
     }
-  } else if (e.target.classList.contains("btn-minus")) {
-    const id = e.target.getAttribute("data-id");
-    const entry = cart.items.find(entry => entry.item.id === id);
-    if (entry) {
-      cart.updateQuantity(id, entry.quantity - 1);
-      logDebug("Cart", `Decremented quantity of ${entry.item.name}`, "info");
-    }
-  }
-});
+  });
+}
 
-// Clear Cart Link hook inside mobile cart drawer
-DOM.clearCartLink.addEventListener("click", () => {
-  cart.clear();
-  matcher.resetSession();
-  activeSearchQuery = "";
-  DOM.simSearchInput.value = "";
-  DOM.appSearchInput.value = "";
-  clearPresetButtonStates();
-  logDebug("Cart", "Cart cleared via link in drawer UI", "info");
-});
+// Clear Cart Link hook
+if (DOM.clearCartLink) {
+  DOM.clearCartLink.addEventListener("click", () => {
+    cart.clear();
+    matcher.resetSession();
+    activeSearchQuery = "";
+    if (DOM.appSearchInput) DOM.appSearchInput.value = "";
+    logDebug("Cart", "Cart cleared via link in drawer UI");
+  });
+}
 
-// --- AI Recommendation Pipeline ---
+// --- AI Recommendation Engine Pipeline ---
 function runAIRecommendationEngine(summary) {
-  // Clear recommendation view if cart is empty
   if (summary.itemsCount === 0) {
-    DOM.aiSuggestionNudge.style.display = "none";
+    if (DOM.aiSuggestionNudge) DOM.aiSuggestionNudge.style.display = "none";
     currentRecommendation = null;
     return;
   }
 
-  // Get matching suggestion from AI engine
   const recommendation = matcher.getRecommendation(summary, activeSearchQuery);
 
   if (recommendation) {
     currentRecommendation = recommendation;
-    const item = recommendation.item;
+    const recItem = recommendation.item;
 
-    // In-Flow Nudge rendering
     DOM.aiRecommendationText.textContent = recommendation.hook;
-    DOM.aiItemIcon.textContent = item.image;
-    DOM.aiItemName.textContent = item.name;
-    DOM.aiItemPrice.textContent = `₹${item.price}`;
-    DOM.aiSuggestionNudge.style.display = "block";
+    DOM.aiItemIcon.textContent = recItem.image;
+    DOM.aiItemName.textContent = recItem.name;
+    DOM.aiItemPrice.textContent = `₹${recItem.price}`;
 
-    // Debug tracking logs
-    const categoriesStr = `[${summary.categories.join(", ")}]`;
-    logDebug("ContextProcessor", `Processed active categories: ${categoriesStr}`, "matcher");
-    if (activeSearchQuery) {
-      logDebug("AIMatcher", `Matched item "${item.name}" via active search intent: "${activeSearchQuery}"`, "success");
-    } else {
-      logDebug("AIMatcher", `Rule matched item "${item.name}" under category "${item.category}". Lock state active.`, "success");
-    }
+    DOM.aiSuggestionNudge.style.display = "block";
+    logDebug("AI Engine", `Nudge card displayed: ${recItem.name}`, "matcher");
   } else {
-    DOM.aiSuggestionNudge.style.display = "none";
-    currentRecommendation = null;
+    if (!matcher.lockedRecommendation) {
+      DOM.aiSuggestionNudge.style.display = "none";
+      currentRecommendation = null;
+    }
   }
 }
 
-// Subscribe cart changes to update UI & AI Matcher
+// Subscribe renderer to cart state changes
 cart.subscribe(summary => {
   renderCart(summary);
   runAIRecommendationEngine(summary);
 });
 
-// --- Slide-Up Preview Sheet UI Logic ---
+// --- 1-Tap Fast Spec Sheet Drawer ---
 function openPreviewSheet(recommendation) {
   if (!recommendation) return;
   const item = recommendation.item;
@@ -287,173 +290,57 @@ function openPreviewSheet(recommendation) {
   DOM.sheetItemName.textContent = item.name;
   DOM.sheetItemPrice.textContent = `₹${item.price}`;
 
-  // Generate specifications table
   DOM.sheetSpecsTable.innerHTML = "";
-  Object.entries(item.specs).forEach(([specKey, specVal]) => {
-    const row = document.createElement("div");
-    row.className = "spec-item";
-    row.innerHTML = `
-      <span class="spec-name">${specKey}</span>
-      <span class="spec-value">${specVal}</span>
-    `;
-    DOM.sheetSpecsTable.appendChild(row);
-  });
-
-  // Action Button stock check
-  if (item.stock_count > 0) {
-    DOM.btnSheetAddCart.textContent = `Add to Cart & Checkout (₹${item.price})`;
-    DOM.btnSheetAddCart.className = "btn-add-action";
-    DOM.btnSheetAddCart.disabled = false;
-  } else {
-    DOM.btnSheetAddCart.textContent = "Out of Stock";
-    DOM.btnSheetAddCart.className = "btn-add-action disabled";
-    DOM.btnSheetAddCart.disabled = true;
+  if (item.specs) {
+    Object.entries(item.specs).forEach(([key, val]) => {
+      const row = document.createElement("div");
+      row.className = "spec-item";
+      row.innerHTML = `
+        <span class="spec-name">${key}</span>
+        <span class="spec-value">${val}</span>
+      `;
+      DOM.sheetSpecsTable.appendChild(row);
+    });
   }
 
-  // Animate sheet upwards
   DOM.specSheetOverlay.classList.add("active");
-  logDebug("UI_Drawer", `Opened Instant Verification Sheet for: ${item.name}`, "info");
+  logDebug("PreviewSheet", `Opened specification sheet for: ${item.name}`);
 }
 
 function closePreviewSheet() {
   DOM.specSheetOverlay.classList.remove("active");
 }
 
-// Nudge card click -> open sheet
-DOM.aiSuggestionNudge.addEventListener("click", () => {
-  openPreviewSheet(currentRecommendation);
-});
-
-DOM.btnCloseSpecSheet.addEventListener("click", closePreviewSheet);
-
-// 1-Tap Add Action Inside Sheet
-DOM.btnSheetAddCart.addEventListener("click", () => {
-  if (currentRecommendation) {
-    const item = currentRecommendation.item;
-    cart.addItem(item, 1);
-    showToast(`Added ${item.name} to cart!`);
-    logDebug("Cart", `Added cross-category suggestion: ${item.name} (₹${item.price})`, "success");
-    closePreviewSheet();
-  }
-});
-
-// --- Scenario presets, Search & Order Placement ---
-
-// Preset Trigger: Samsung Galaxy Charger
-if (DOM.presetSamsung) {
-  DOM.presetSamsung.addEventListener("click", () => {
-    cart.clear();
-    matcher.resetSession();
-    activeSearchQuery = "";
-    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
-    DOM.appSearchInput.value = "";
-    
-    const charger = GROCERY_ITEMS.find(g => g.id === "g8");
-    cart.addItem(charger, 1);
-
-    clearPresetButtonStates();
-    DOM.presetSamsung.classList.add("active");
-    
-    logDebug("Scenario", "Samsung Charger Preset activated: Samsung Galaxy Charger (₹1499) loaded.", "success");
+if (DOM.aiSuggestionNudge) {
+  DOM.aiSuggestionNudge.addEventListener("click", () => {
+    openPreviewSheet(currentRecommendation);
   });
 }
 
-// Preset Trigger: Breakfast
-if (DOM.presetBreakfast) {
-  DOM.presetBreakfast.addEventListener("click", () => {
-    cart.clear();
-    matcher.resetSession();
-    activeSearchQuery = "";
-    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
-    DOM.appSearchInput.value = "";
-    
-    const milk = GROCERY_ITEMS.find(g => g.id === "g1");
-    const bread = GROCERY_ITEMS.find(g => g.id === "g2");
-    
-    cart.addItem(milk, 1);
-    cart.addItem(bread, 1);
+if (DOM.btnCloseSpecSheet) {
+  DOM.btnCloseSpecSheet.addEventListener("click", closePreviewSheet);
+}
 
-    // Set active class visual state
-    clearPresetButtonStates();
-    DOM.presetBreakfast.classList.add("active");
-    
-    logDebug("Scenario", "Tech Refill preset activated: Dairy & Bakery loaded.", "success");
+if (DOM.btnSheetAddCart) {
+  DOM.btnSheetAddCart.addEventListener("click", () => {
+    if (currentRecommendation) {
+      const item = currentRecommendation.item;
+      cart.addItem(item, 1);
+      showToast(`Added ${item.name} to cart!`);
+      logDebug("Cart", `Added suggestion: ${item.name} (₹${item.price})`, "success");
+      closePreviewSheet();
+    }
   });
 }
 
-// Preset Trigger: Dinner
-if (DOM.presetDinner) {
-  DOM.presetDinner.addEventListener("click", () => {
-    cart.clear();
-    matcher.resetSession();
-    activeSearchQuery = "";
-    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
-    DOM.appSearchInput.value = "";
-    
-    const tomatoes = GROCERY_ITEMS.find(g => g.id === "g4");
-    const onion = GROCERY_ITEMS.find(g => g.id === "g5");
-    
-    cart.addItem(tomatoes, 1);
-    cart.addItem(onion, 1);
-
-    clearPresetButtonStates();
-    DOM.presetDinner.classList.add("active");
-    
-    logDebug("Scenario", "Cosmetics Routine preset activated: Veggies loaded.", "success");
-  });
-}
-
-// Preset Trigger: Party Snacks
-if (DOM.presetParty) {
-  DOM.presetParty.addEventListener("click", () => {
-    cart.clear();
-    matcher.resetSession();
-    activeSearchQuery = "";
-    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
-    DOM.appSearchInput.value = "";
-    
-    const chips = GROCERY_ITEMS.find(g => g.id === "g6");
-    const coke = GROCERY_ITEMS.find(g => g.id === "g7");
-    
-    cart.addItem(chips, 1);
-    cart.addItem(coke, 2);
-
-    clearPresetButtonStates();
-    DOM.presetParty.classList.add("active");
-    
-    logDebug("Scenario", "Late Night Snacks preset activated: Chips & Beverages loaded.", "success");
-  });
-}
-
-// Clear scenario
-if (DOM.btnClearScenario) {
-  DOM.btnClearScenario.addEventListener("click", () => {
-    cart.clear();
-    matcher.resetSession();
-    activeSearchQuery = "";
-    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
-    DOM.appSearchInput.value = "";
-    clearPresetButtonStates();
-    logDebug("Scenario", "Scenario reset. Cart is empty, session matcher cleared.", "info");
-  });
-}
-
-function clearPresetButtonStates() {
-  if (DOM.presetSamsung) DOM.presetSamsung.classList.remove("active");
-  if (DOM.presetBreakfast) DOM.presetBreakfast.classList.remove("active");
-  if (DOM.presetDinner) DOM.presetDinner.classList.remove("active");
-  if (DOM.presetParty) DOM.presetParty.classList.remove("active");
-}
-
-// Helper: Update Search Dropdown results
+// --- In-Flow Search Dropdown Logic ---
 function updateSearchDropdown(query) {
   const cleanQuery = query.trim().toLowerCase();
   if (cleanQuery.length === 0) {
-    DOM.searchResultsDropdown.style.display = "none";
+    if (DOM.searchResultsDropdown) DOM.searchResultsDropdown.style.display = "none";
     return;
   }
 
-  // Filter both catalogs
   const groceryMatches = GROCERY_ITEMS.filter(item => 
     item.name.toLowerCase().includes(cleanQuery) || 
     (item.tags && item.tags.some(t => t.includes(cleanQuery)))
@@ -484,7 +371,7 @@ function updateSearchDropdown(query) {
             <span class="search-result-price">₹${item.price}</span>
           </div>
         </div>
-        <button class="btn-add-search-result" data-id="${item.id}">+ Add</button>
+        <button class="btn-add-search-result" data-id="${item.id}">+ ADD</button>
       `;
       DOM.searchResultsDropdown.appendChild(row);
     });
@@ -493,48 +380,43 @@ function updateSearchDropdown(query) {
   DOM.searchResultsDropdown.style.display = "flex";
 }
 
-// In-Flow Search Bar input handling (Syncs with engine & shows dropdown)
-DOM.appSearchInput.addEventListener("input", () => {
-  const query = DOM.appSearchInput.value;
-  activeSearchQuery = query.trim();
-  DOM.simSearchInput.value = query; // Sync with desktop box
+if (DOM.appSearchInput) {
+  DOM.appSearchInput.addEventListener("input", () => {
+    const query = DOM.appSearchInput.value;
+    activeSearchQuery = query.trim();
+    updateSearchDropdown(query);
 
-  updateSearchDropdown(query);
-
-  if (activeSearchQuery) {
-    logDebug("SearchSim", `Search query input in app search: "${activeSearchQuery}"`, "info");
-  }
-  
-  // Re-run matching pipeline
-  runAIRecommendationEngine(cart.getSummary());
-});
-
-// Search Dropdown List item quick addition hook
-DOM.searchResultsDropdown.addEventListener("click", e => {
-  if (e.target.classList.contains("btn-add-search-result")) {
-    const id = e.target.getAttribute("data-id");
-    
-    // Find in either catalog
-    let item = GROCERY_ITEMS.find(g => g.id === id);
-    if (!item) {
-      item = NON_GROCERY_CATALOG.find(ng => ng.id === id);
+    if (activeSearchQuery) {
+      logDebug("Search", `Active query: "${activeSearchQuery}"`);
     }
     
-    if (item) {
-      cart.addItem(item, 1);
-      showToast(`Added ${item.name} to cart!`);
-      logDebug("Cart", `Searched and added: ${item.name} (₹${item.price})`, "success");
+    runAIRecommendationEngine(cart.getSummary());
+  });
+}
+
+if (DOM.searchResultsDropdown) {
+  DOM.searchResultsDropdown.addEventListener("click", e => {
+    if (e.target.classList.contains("btn-add-search-result")) {
+      const id = e.target.getAttribute("data-id");
       
-      // Reset search inputs & dropdown
-      DOM.appSearchInput.value = "";
-      if (DOM.simSearchInput) DOM.simSearchInput.value = "";
-      activeSearchQuery = "";
-      DOM.searchResultsDropdown.style.display = "none";
+      let item = GROCERY_ITEMS.find(g => g.id === id);
+      if (!item) {
+        item = NON_GROCERY_CATALOG.find(ng => ng.id === id);
+      }
+      
+      if (item) {
+        cart.addItem(item, 1);
+        showToast(`Added ${item.name} to cart!`);
+        logDebug("Cart", `Searched and added: ${item.name} (₹${item.price})`, "success");
+        
+        DOM.appSearchInput.value = "";
+        activeSearchQuery = "";
+        DOM.searchResultsDropdown.style.display = "none";
+      }
     }
-  }
-});
+  });
+}
 
-// Hide dropdown on clicking outside
 document.addEventListener("click", e => {
   if (DOM.appSearchInput && !DOM.appSearchInput.contains(e.target) && 
       DOM.searchResultsDropdown && !DOM.searchResultsDropdown.contains(e.target)) {
@@ -542,51 +424,20 @@ document.addEventListener("click", e => {
   }
 });
 
-// Search Simulation click (Desktop side control)
-if (DOM.btnSearchSim) {
-  DOM.btnSearchSim.addEventListener("click", () => {
-    const query = DOM.simSearchInput.value;
-    activeSearchQuery = query.trim();
-    DOM.appSearchInput.value = query; // Sync with mobile search input
+// --- Checkout Placement Hook ---
+if (DOM.btnPlaceOrder) {
+  DOM.btnPlaceOrder.addEventListener("click", () => {
+    const summary = cart.getSummary();
+    showToast("🎉 Order Placed Successfully!");
+    logDebug("Checkout", `Placed order for ₹${summary.total}. Pass-through verification passed successfully.`, "success");
     
-    updateSearchDropdown(query);
-
-    if (activeSearchQuery) {
-      logDebug("SearchSim", `Simulated search query via control panel: "${activeSearchQuery}"`, "info");
-    } else {
-      logDebug("SearchSim", "Search input cleared.", "info");
-    }
-    
-    // Re-run matching pipeline
-    runAIRecommendationEngine(cart.getSummary());
+    setTimeout(() => {
+      cart.clear();
+      matcher.resetSession();
+      if (DOM.appSearchInput) DOM.appSearchInput.value = "";
+    }, 1200);
   });
 }
-
-// Search input Enter key trigger
-if (DOM.simSearchInput) {
-  DOM.simSearchInput.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      DOM.btnSearchSim.click();
-    }
-  });
-}
-
-// Place Order (Instant Pass-Through)
-DOM.btnPlaceOrder.addEventListener("click", () => {
-  const summary = cart.getSummary();
-  showToast("🎉 Order Placed Successfully! (Pass-Through Complete)");
-  logDebug("Checkout", `Placed order for ₹${summary.total}. Pass-through verification passed successfully.`, "success");
-  
-  // Clear cart & reset state
-  setTimeout(() => {
-    cart.clear();
-    matcher.resetSession();
-    clearPresetButtonStates();
-    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
-    DOM.appSearchInput.value = "";
-  }, 1000);
-});
 
 // --- App Bootstrap ---
-renderCatalog();
-logDebug("System", "QuickShop AI Assistant bootstrap complete. UI interactive.", "success");
+renderPopularEssentials("All");

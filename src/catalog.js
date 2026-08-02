@@ -7,60 +7,67 @@ export const GROCERY_ITEMS = [
     name: "Samsung Galaxy Charger",
     category: "Electronics",
     price: 1499,
+    mrp: 1899,
     unit: "1 Unit",
     image: "📱",
-    tags: ["samsung", "charger", "galaxy"]
+    tags: ["samsung", "charger", "galaxy", "electronics"]
   },
   {
     id: "g1",
     name: "Amul Taaza Fresh Toned Milk",
-    category: "dairy",
+    category: "Grocery",
     price: 27,
+    mrp: 30,
     unit: "500 ml",
     image: "🥛",
-    tags: ["milk", "dairy", "morning-routine"]
+    tags: ["milk", "dairy", "morning-routine", "grocery"]
   },
   {
     id: "g2",
     name: "Harvest Gold Sliced White Bread",
-    category: "bakery",
+    category: "Grocery",
     price: 45,
+    mrp: 50,
     unit: "400 g",
     image: "🍞",
-    tags: ["bread", "breakfast", "bakery"]
+    tags: ["bread", "breakfast", "bakery", "grocery"]
   },
   {
     id: "g3",
     name: "Farm Fresh Large Eggs",
-    category: "dairy",
+    category: "Grocery",
     price: 84,
+    mrp: 95,
     unit: "6 pcs",
     image: "🥚",
-    tags: ["eggs", "protein", "breakfast"]
+    tags: ["eggs", "protein", "breakfast", "grocery"]
   },
   {
     id: "g4",
     name: "Fresh Hybrid Tomatoes",
-    category: "vegetables",
+    category: "Grocery",
     price: 38,
+    mrp: 45,
     unit: "500 g",
     image: "🍅",
-    tags: ["tomato", "veggies", "cooking"]
+    tags: ["tomato", "veggies", "cooking", "grocery"]
   },
   {
     id: "g5",
     name: "Premium Onion (Pyaz)",
-    category: "vegetables",
+    category: "Grocery",
     price: 42,
+    mrp: 50,
     unit: "1 kg",
     image: "🧅",
-    tags: ["onion", "veggies", "cooking"]
+    tags: ["onion", "veggies", "cooking", "grocery"]
   },
   {
     id: "g6",
     name: "Lay's Classic Salted Potato Chips",
-    category: "snacks",
+    category: "Snacks",
     price: 30,
+    mrp: 35,
     unit: "90 g",
     image: "🥔",
     tags: ["chips", "snacks", "munchies"]
@@ -68,11 +75,12 @@ export const GROCERY_ITEMS = [
   {
     id: "g7",
     name: "Coca-Cola Zero Sugar Soft Drink",
-    category: "beverages",
+    category: "Snacks",
     price: 40,
+    mrp: 45,
     unit: "300 ml Can",
     image: "🥤",
-    tags: ["coke", "soda", "cold-drink"]
+    tags: ["coke", "soda", "cold-drink", "snacks"]
   }
 ];
 
@@ -83,6 +91,7 @@ export const NON_GROCERY_CATALOG = [
     name: "PowerPulse 25W Adapter",
     category: "Electronics",
     price: 899,
+    mrp: 1299,
     image: "🔌",
     stock_count: 12,
     specs: {
@@ -103,6 +112,7 @@ export const NON_GROCERY_CATALOG = [
     name: "Portronics 20W Type-C Fast Charger",
     category: "Electronics",
     price: 349,
+    mrp: 599,
     image: "🔌",
     stock_count: 8,
     specs: {
@@ -113,7 +123,7 @@ export const NON_GROCERY_CATALOG = [
     },
     replacement_guarantee: "10-Minute Doorstep Replacement & Return",
     trigger_rule: {
-      cart_categories: ["dairy", "bakery"], // If user buying breakfast, nudge charger as "convenience tech utility"
+      cart_categories: ["Grocery", "dairy", "bakery"], // If user buying breakfast/grocery, nudge charger as "convenience tech utility"
       search_intent: ["charger", "cable", "tech", "portronics", "phone"],
       routine_hook: "Keep your devices powered while cooking breakfast! Charge from 0 to 50% in just 30 mins."
     }
@@ -123,6 +133,7 @@ export const NON_GROCERY_CATALOG = [
     name: "Mi Braided USB-C to USB-C Tough Cable",
     category: "Electronics",
     price: 199,
+    mrp: 299,
     image: "🔌",
     stock_count: 14,
     specs: {
@@ -143,8 +154,9 @@ export const NON_GROCERY_CATALOG = [
   {
     id: "ng_beauty_1",
     name: "The Derma Co 1% Hyaluronic Sunscreen Aqua Gel",
-    category: "Cosmetics",
+    category: "Beauty & Care",
     price: 499,
+    mrp: 599,
     image: "🧴",
     stock_count: 5,
     specs: {
@@ -155,8 +167,8 @@ export const NON_GROCERY_CATALOG = [
     },
     replacement_guarantee: "10-Minute Doorstep Replacement & Return",
     trigger_rule: {
-      cart_categories: ["vegetables"], // Fresh morning routine hook
-      search_intent: ["sunscreen", "spf", "derma", "skin", "cream"],
+      cart_categories: ["Grocery", "vegetables"], // Fresh morning routine hook
+      search_intent: ["sunscreen", "spf", "derma", "skin", "cream", "beauty"],
       routine_hook: "Grab your daily UV protection with your fresh morning groceries."
     }
   },
@@ -165,8 +177,9 @@ export const NON_GROCERY_CATALOG = [
   {
     id: "ng_home_1",
     name: "Shalimar Oxo-Biodegradable Garbage Bags",
-    category: "Home Utilities",
+    category: "Kitchen Utilities",
     price: 120,
+    mrp: 150,
     image: "🗑️",
     stock_count: 22,
     specs: {
@@ -176,7 +189,7 @@ export const NON_GROCERY_CATALOG = [
     },
     replacement_guarantee: "10-Minute Doorstep Replacement & Return",
     trigger_rule: {
-      cart_categories: ["vegetables", "dairy"], // Groceries generate kitchen trash
+      cart_categories: ["Grocery", "vegetables", "dairy"], // Groceries generate kitchen trash
       search_intent: ["bag", "garbage", "trash", "cleaning", "kitchen"],
       routine_hook: "Need kitchen garbage bags? Add a roll of Shalimar Oxo-biodegradable bags."
     }
@@ -188,6 +201,7 @@ export const NON_GROCERY_CATALOG = [
     name: "Pedigree Chicken & Vegetables Dry Dog Food",
     category: "Pet Care",
     price: 360,
+    mrp: 420,
     image: "🐶",
     stock_count: 4,
     specs: {
@@ -198,7 +212,7 @@ export const NON_GROCERY_CATALOG = [
     },
     replacement_guarantee: "10-Minute Doorstep Replacement & Return",
     trigger_rule: {
-      cart_categories: ["snacks", "beverages"],
+      cart_categories: ["Snacks", "beverages"],
       search_intent: ["dog", "pedigree", "pet", "dog food", "food"],
       routine_hook: "Don't forget your furry friend! Pedigree chicken dry food is ready at your local dark store."
     }
@@ -210,6 +224,7 @@ export const NON_GROCERY_CATALOG = [
     name: "Himalaya Herbal Gentle Baby Wipes",
     category: "Baby Care",
     price: 185,
+    mrp: 220,
     image: "👶",
     stock_count: 10,
     specs: {
@@ -220,7 +235,7 @@ export const NON_GROCERY_CATALOG = [
     },
     replacement_guarantee: "10-Minute Doorstep Replacement & Return",
     trigger_rule: {
-      cart_categories: ["dairy"],
+      cart_categories: ["Grocery", "dairy"],
       search_intent: ["baby", "wipes", "himalaya", "diaper", "child"],
       routine_hook: "Stock up on gentle baby essentials with your daily dairy refill."
     }

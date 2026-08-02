@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickShop — Cart Drawer AI Assistant MVP</title>
+  <title>Zepto — 10-Minute Grocery & Instant Delivery</title>
   <link rel="stylesheet" href="./src/style.css">
 </head>
 <body>
   <div class="container">
     
-    <!-- RIGHT PANEL: PHONE FRAME SIMULATOR -->
-    <div class="simulator-pane" style="width: 100%; height: 100vh;">
+    <!-- PHONE FRAME SIMULATOR -->
+    <div class="simulator-pane">
       
       <!-- Toast Alert Notification -->
       <div class="toast-notif" id="cart-toast-notif">Item added to cart!</div>
@@ -27,53 +27,64 @@
         <!-- Simulated App Screen -->
         <div class="app-screen">
           
-          <!-- Header (QuickShop) -->
-          <div class="app-header">
-            <div class="header-title">
-              <h3>QuickShop</h3>
-              <span>⚡ Delivering in 10 mins</span>
+          <!-- 2. TOP HEADER & NAVIGATION REFACTOR -->
+          <div class="zepto-app-header">
+            <div class="zepto-header-top">
+              <div class="zepto-brand-logo">
+                <span class="logo-text">zepto</span><span class="logo-dot">.</span>
+              </div>
+              <div class="location-pill">
+                <span class="lightning-icon">⚡</span>
+                <span class="location-text"><strong>10 MINS</strong> to Home - B-Block, Sector 62</span>
+                <span class="caret-down">▾</span>
+              </div>
+              <div class="profile-avatar">
+                <span>👤</span>
+              </div>
             </div>
-            <div class="cart-icon">🛒</div>
+
+            <!-- Zepto Search Bar -->
+            <div class="zepto-search-container">
+              <div class="zepto-search-bar">
+                <span class="search-magnifier">🔍</span>
+                <input type="text" id="app-search-input" placeholder="Search 'milk, 20W charger, doritos, sunscreen...'">
+                <span class="search-scanner">📷</span>
+              </div>
+              <!-- Search Dropdown Results -->
+              <div class="search-results-dropdown" id="search-results-dropdown" style="display: none;"></div>
+            </div>
+
+            <!-- Quick Category Rail -->
+            <div class="category-rail" id="category-rail">
+              <button class="cat-pill active" data-cat="All">All</button>
+              <button class="cat-pill" data-cat="Grocery">Grocery 🥦</button>
+              <button class="cat-pill" data-cat="Electronics">Electronics ⚡</button>
+              <button class="cat-pill" data-cat="Beauty & Care">Beauty & Care 🧴</button>
+              <button class="cat-pill" data-cat="Kitchen Utilities">Kitchen Utilities 🧹</button>
+              <button class="cat-pill" data-cat="Snacks">Snacks 🍿</button>
+            </div>
           </div>
 
-           <!-- App In-Flow Search Bar -->
-           <div class="app-search-container" style="position: relative; z-index: 50;">
-             <div class="app-search-bar">
-               <span class="search-icon">🔍</span>
-               <input type="text" id="app-search-input" placeholder="Search for products...">
-             </div>
-             <!-- Search Dropdown Results -->
-             <div class="search-results-dropdown" id="search-results-dropdown" style="display: none;"></div>
-           </div>
-
-          <!-- Main Scroll Content -->
+          <!-- 3. MAIN BODY REFACTOR -->
           <div class="cart-scroll-area" id="phone-cart-scroll">
             
-            <!-- Empty state placeholder -->
-            <div class="empty-state" id="cart-empty-view">
-              <div class="empty-icon">🛒</div>
-              <h3>Your cart is empty</h3>
-              <p style="font-size: 12px; margin-top: 4px;">Search for products above to start shopping.</p>
-            </div>
-
             <!-- Cart Section Header (Your Cart & Clear Cart) -->
             <div class="cart-section-header" id="cart-section-header" style="display: none;">
-              <h4>Your Cart</h4>
+              <h4>Your Cart Items</h4>
               <span class="clear-cart-link" id="clear-cart-link">Clear Cart</span>
             </div>
 
             <!-- Active Cart Products Wrapper -->
             <div class="cart-items-container" id="cart-items-list" style="display: none;">
-              <!-- Dynamic list of items in the cart -->
+              <!-- Dynamic list of items in the cart injected by app.js -->
             </div>
 
-            <!-- EMBEDDED NON-INTRUSIVE AI ASSISTANT CARD -->
+            <!-- EMBEDDED AI CROSS-CATEGORY ASSISTANT CARD -->
             <div class="ai-surface-container" id="ai-suggestion-nudge">
               <div class="ai-surface-card" id="ai-nudge-card">
                 <div class="ai-badge-row">
                   <div class="ai-badge-left">
-                    <div class="ai-icon-circle">✨</div>
-                    <span class="ai-title-text">AI Assistant</span>
+                    <span class="ai-pill-badge">✨ AI ASSISTANT</span>
                   </div>
                   <div class="ai-chevron">➔</div>
                 </div>
@@ -88,7 +99,69 @@
                       <span class="ai-prod-price" id="ai-item-price">₹899</span>
                     </div>
                   </div>
-                  <div class="ai-prod-action">View Details</div>
+                  <div class="ai-prod-action">+ ADD</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- POPULAR ESSENTIALS / QUICK ADD SECTION -->
+            <div class="popular-section" id="popular-essentials-section">
+              <div class="popular-header">
+                <h4>Popular Essentials</h4>
+                <span class="popular-badge">⚡ 10 MINS</span>
+              </div>
+              <div class="product-grid" id="popular-products-grid">
+                <!-- Injected dynamically or pre-rendered -->
+                <div class="essential-card" data-id="g8">
+                  <div class="essential-icon">📱</div>
+                  <div class="essential-info">
+                    <span class="essential-title">Samsung Galaxy Charger</span>
+                    <span class="essential-unit">1 Unit</span>
+                    <div class="essential-price-row">
+                      <span class="essential-price">₹1499</span>
+                      <span class="essential-mrp">₹1899</span>
+                    </div>
+                  </div>
+                  <button class="btn-add-green" data-id="g8">+ ADD</button>
+                </div>
+
+                <div class="essential-card" data-id="g1">
+                  <div class="essential-icon">🥛</div>
+                  <div class="essential-info">
+                    <span class="essential-title">Amul Taaza Fresh Toned Milk</span>
+                    <span class="essential-unit">500 ml</span>
+                    <div class="essential-price-row">
+                      <span class="essential-price">₹27</span>
+                      <span class="essential-mrp">₹30</span>
+                    </div>
+                  </div>
+                  <button class="btn-add-green" data-id="g1">+ ADD</button>
+                </div>
+
+                <div class="essential-card" data-id="g2">
+                  <div class="essential-icon">🍞</div>
+                  <div class="essential-info">
+                    <span class="essential-title">Harvest Gold White Bread</span>
+                    <span class="essential-unit">400 g</span>
+                    <div class="essential-price-row">
+                      <span class="essential-price">₹45</span>
+                      <span class="essential-mrp">₹50</span>
+                    </div>
+                  </div>
+                  <button class="btn-add-green" data-id="g2">+ ADD</button>
+                </div>
+
+                <div class="essential-card" data-id="ng_beauty_1">
+                  <div class="essential-icon">🧴</div>
+                  <div class="essential-info">
+                    <span class="essential-title">The Derma Co Sunscreen Gel</span>
+                    <span class="essential-unit">50 g</span>
+                    <div class="essential-price-row">
+                      <span class="essential-price">₹499</span>
+                      <span class="essential-mrp">₹599</span>
+                    </div>
+                  </div>
+                  <button class="btn-add-green" data-id="ng_beauty_1">+ ADD</button>
                 </div>
               </div>
             </div>
@@ -102,25 +175,25 @@
               </div>
               <div class="bill-row">
                 <span class="bill-label">Delivery Partner Fee</span>
-                <span class="bill-value" id="bill-delivery-fee">₹25</span>
+                <span class="bill-value free" id="bill-delivery-fee">FREE</span>
               </div>
               <div class="bill-divider"></div>
               <div class="bill-row grand-total">
                 <span class="bill-label">To Pay</span>
-                <span class="bill-value" id="bill-grand-total">₹30</span>
+                <span class="bill-value" id="bill-grand-total">₹0</span>
               </div>
             </div>
             
           </div>
 
-          <!-- Statically Positioned Checkout Drawer Footer -->
+          <!-- 4. BOTTOM CHECKOUT DOCK -->
           <div class="checkout-bar" id="cart-action-bar" style="display: none;">
             <div class="checkout-left-summary">
-              <span class="checkout-total-price" id="checkout-total-price">₹1499</span>
+              <span class="checkout-total-price" id="checkout-total-price">₹0</span>
               <span class="btn-view-bill" id="btn-view-bill">VIEW BILL</span>
             </div>
             <button class="btn-place-order" id="btn-place-order">
-              <span>Proceed to Pay</span> ➔
+              <span>Proceed to Pay</span> →
             </button>
           </div>
 
@@ -135,7 +208,7 @@
                   <div class="sheet-prod-icon" id="sheet-item-icon">🔌</div>
                   <div class="sheet-prod-title">
                     <h3 id="sheet-item-name">PowerPulse 25W Adapter</h3>
-                    <span>Price: <strong style="color: var(--text-dark);" id="sheet-item-price">₹899</strong></span>
+                    <span>Price: <strong style="color: var(--text-primary);" id="sheet-item-price">₹899</strong></span>
                   </div>
                 </div>
                 <button class="btn-close-sheet" id="btn-close-spec-sheet">✕</button>
