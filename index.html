@@ -9,69 +9,8 @@
 <body>
   <div class="container">
     
-    <!-- LEFT PANEL: TEST CONTROLLER & DEBUGS -->
-    <div class="control-panel">
-      <div class="panel-header">
-        <h1>QuickShop AI Assistant</h1>
-        <p>Interactive MVP Testing Panel & Context Simulation</p>
-      </div>
-
-      <!-- Presets / Quick Carts -->
-      <div class="panel-section">
-        <h2>1. Simulators (User Presets)</h2>
-        <div class="preset-grid">
-          <button class="btn-preset" id="preset-samsung">
-            <span>📱</span> Samsung Charger Preset (₹1499)
-          </button>
-          <button class="btn-preset" id="preset-breakfast">
-            <span>🥛</span> Tech Refill Preset (Breakfast)
-          </button>
-          <button class="btn-preset" id="preset-dinner">
-            <span>🧴</span> Cosmetics Routine Preset (Veggies)
-          </button>
-          <button class="btn-preset" id="preset-party">
-            <span>🥤</span> Late Night Snacks Preset
-          </button>
-          <button class="btn-preset" id="btn-clear-scenario">
-            <span>❌</span> Reset Scenario (Empty Cart)
-          </button>
-        </div>
-      </div>
-
-      <!-- Search Query Simulator -->
-      <div class="panel-section">
-        <h2>2. Active Search Intent</h2>
-        <div class="search-wrapper">
-          <input type="text" id="sim-search-input" class="search-input" placeholder="e.g. charger, sunscreen, pedigree...">
-          <button id="btn-search-sim" class="btn-search">Simulate Search</button>
-        </div>
-      </div>
-
-      <!-- Quick Add Catalog items -->
-      <div class="panel-section">
-        <h2>3. Catalog Quick Add</h2>
-        <div class="catalog-list" id="quick-catalog-list">
-          <!-- Catalog items will be injected by JS -->
-        </div>
-      </div>
-
-      <!-- Realtime Engine Diagnostics -->
-      <div class="panel-section">
-        <h2>4. Live AI Diagnostics Console</h2>
-        <div class="debug-console" id="debug-log-box">
-          <div class="debug-title">
-            <span>AI MATCHING ENGINE LOGS</span>
-            <span style="color: #ff9f43;" id="debug-timestamp">01:54:36</span>
-          </div>
-          <div id="debug-messages">
-            [System] Waiting for cart items to trigger AI processor...
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- RIGHT PANEL: PHONE FRAME SIMULATOR -->
-    <div class="simulator-pane">
+    <div class="simulator-pane" style="width: 100%; height: 100vh;">
       
       <!-- Toast Alert Notification -->
       <div class="toast-notif" id="cart-toast-notif">Item added to cart!</div>
@@ -114,7 +53,7 @@
             <div class="empty-state" id="cart-empty-view">
               <div class="empty-icon">🛒</div>
               <h3>Your cart is empty</h3>
-              <p style="font-size: 12px; margin-top: 4px;">Add items using the Quick Add panel on the left to start testing.</p>
+              <p style="font-size: 12px; margin-top: 4px;">Search for products above to start shopping.</p>
             </div>
 
             <!-- Cart Section Header (Your Cart & Clear Cart) -->

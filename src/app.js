@@ -76,14 +76,16 @@ function updatePhoneClock() {
   const now = new Date();
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
-  DOM.phoneTime.textContent = `${hours}:${minutes}`;
-  DOM.debugTimestamp.textContent = `${hours}:${minutes}:${String(now.getSeconds()).padStart(2, '0')}`;
+  if (DOM.phoneTime) DOM.phoneTime.textContent = `${hours}:${minutes}`;
+  if (DOM.debugTimestamp) DOM.debugTimestamp.textContent = `${hours}:${minutes}:${String(now.getSeconds()).padStart(2, '0')}`;
 }
 setInterval(updatePhoneClock, 1000);
 updatePhoneClock();
 
 // --- Logger Helper ---
 function logDebug(module, message, type = "info") {
+  console.log(`[${module}] ${message}`);
+  if (!DOM.debugMessages || !DOM.debugLogBox) return;
   const now = new Date();
   const timeStr = now.toTimeString().split(' ')[0];
   const prefix = `[${timeStr}] [${module}] `;
@@ -105,6 +107,7 @@ function logDebug(module, message, type = "info") {
 
 // --- Render Quick Add Catalog (Left Side) ---
 function renderCatalog() {
+  if (!DOM.quickCatalogList) return;
   DOM.quickCatalogList.innerHTML = "";
   GROCERY_ITEMS.forEach(item => {
     const card = document.createElement("div");
@@ -337,93 +340,103 @@ DOM.btnSheetAddCart.addEventListener("click", () => {
 // --- Scenario presets, Search & Order Placement ---
 
 // Preset Trigger: Samsung Galaxy Charger
-DOM.presetSamsung.addEventListener("click", () => {
-  cart.clear();
-  matcher.resetSession();
-  activeSearchQuery = "";
-  DOM.simSearchInput.value = "";
-  DOM.appSearchInput.value = "";
-  
-  const charger = GROCERY_ITEMS.find(g => g.id === "g8");
-  cart.addItem(charger, 1);
+if (DOM.presetSamsung) {
+  DOM.presetSamsung.addEventListener("click", () => {
+    cart.clear();
+    matcher.resetSession();
+    activeSearchQuery = "";
+    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
+    DOM.appSearchInput.value = "";
+    
+    const charger = GROCERY_ITEMS.find(g => g.id === "g8");
+    cart.addItem(charger, 1);
 
-  clearPresetButtonStates();
-  DOM.presetSamsung.classList.add("active");
-  
-  logDebug("Scenario", "Samsung Charger Preset activated: Samsung Galaxy Charger (₹1499) loaded.", "success");
-});
+    clearPresetButtonStates();
+    DOM.presetSamsung.classList.add("active");
+    
+    logDebug("Scenario", "Samsung Charger Preset activated: Samsung Galaxy Charger (₹1499) loaded.", "success");
+  });
+}
 
 // Preset Trigger: Breakfast
-DOM.presetBreakfast.addEventListener("click", () => {
-  cart.clear();
-  matcher.resetSession();
-  activeSearchQuery = "";
-  DOM.simSearchInput.value = "";
-  DOM.appSearchInput.value = "";
-  
-  const milk = GROCERY_ITEMS.find(g => g.id === "g1");
-  const bread = GROCERY_ITEMS.find(g => g.id === "g2");
-  
-  cart.addItem(milk, 1);
-  cart.addItem(bread, 1);
+if (DOM.presetBreakfast) {
+  DOM.presetBreakfast.addEventListener("click", () => {
+    cart.clear();
+    matcher.resetSession();
+    activeSearchQuery = "";
+    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
+    DOM.appSearchInput.value = "";
+    
+    const milk = GROCERY_ITEMS.find(g => g.id === "g1");
+    const bread = GROCERY_ITEMS.find(g => g.id === "g2");
+    
+    cart.addItem(milk, 1);
+    cart.addItem(bread, 1);
 
-  // Set active class visual state
-  clearPresetButtonStates();
-  DOM.presetBreakfast.classList.add("active");
-  
-  logDebug("Scenario", "Tech Refill preset activated: Dairy & Bakery loaded.", "success");
-});
+    // Set active class visual state
+    clearPresetButtonStates();
+    DOM.presetBreakfast.classList.add("active");
+    
+    logDebug("Scenario", "Tech Refill preset activated: Dairy & Bakery loaded.", "success");
+  });
+}
 
 // Preset Trigger: Dinner
-DOM.presetDinner.addEventListener("click", () => {
-  cart.clear();
-  matcher.resetSession();
-  activeSearchQuery = "";
-  DOM.simSearchInput.value = "";
-  DOM.appSearchInput.value = "";
-  
-  const tomatoes = GROCERY_ITEMS.find(g => g.id === "g4");
-  const onion = GROCERY_ITEMS.find(g => g.id === "g5");
-  
-  cart.addItem(tomatoes, 1);
-  cart.addItem(onion, 1);
+if (DOM.presetDinner) {
+  DOM.presetDinner.addEventListener("click", () => {
+    cart.clear();
+    matcher.resetSession();
+    activeSearchQuery = "";
+    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
+    DOM.appSearchInput.value = "";
+    
+    const tomatoes = GROCERY_ITEMS.find(g => g.id === "g4");
+    const onion = GROCERY_ITEMS.find(g => g.id === "g5");
+    
+    cart.addItem(tomatoes, 1);
+    cart.addItem(onion, 1);
 
-  clearPresetButtonStates();
-  DOM.presetDinner.classList.add("active");
-  
-  logDebug("Scenario", "Cosmetics Routine preset activated: Veggies loaded.", "success");
-});
+    clearPresetButtonStates();
+    DOM.presetDinner.classList.add("active");
+    
+    logDebug("Scenario", "Cosmetics Routine preset activated: Veggies loaded.", "success");
+  });
+}
 
 // Preset Trigger: Party Snacks
-DOM.presetParty.addEventListener("click", () => {
-  cart.clear();
-  matcher.resetSession();
-  activeSearchQuery = "";
-  DOM.simSearchInput.value = "";
-  DOM.appSearchInput.value = "";
-  
-  const chips = GROCERY_ITEMS.find(g => g.id === "g6");
-  const coke = GROCERY_ITEMS.find(g => g.id === "g7");
-  
-  cart.addItem(chips, 1);
-  cart.addItem(coke, 2);
+if (DOM.presetParty) {
+  DOM.presetParty.addEventListener("click", () => {
+    cart.clear();
+    matcher.resetSession();
+    activeSearchQuery = "";
+    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
+    DOM.appSearchInput.value = "";
+    
+    const chips = GROCERY_ITEMS.find(g => g.id === "g6");
+    const coke = GROCERY_ITEMS.find(g => g.id === "g7");
+    
+    cart.addItem(chips, 1);
+    cart.addItem(coke, 2);
 
-  clearPresetButtonStates();
-  DOM.presetParty.classList.add("active");
-  
-  logDebug("Scenario", "Late Night Snacks preset activated: Chips & Beverages loaded.", "success");
-});
+    clearPresetButtonStates();
+    DOM.presetParty.classList.add("active");
+    
+    logDebug("Scenario", "Late Night Snacks preset activated: Chips & Beverages loaded.", "success");
+  });
+}
 
 // Clear scenario
-DOM.btnClearScenario.addEventListener("click", () => {
-  cart.clear();
-  matcher.resetSession();
-  activeSearchQuery = "";
-  DOM.simSearchInput.value = "";
-  DOM.appSearchInput.value = "";
-  clearPresetButtonStates();
-  logDebug("Scenario", "Scenario reset. Cart is empty, session matcher cleared.", "info");
-});
+if (DOM.btnClearScenario) {
+  DOM.btnClearScenario.addEventListener("click", () => {
+    cart.clear();
+    matcher.resetSession();
+    activeSearchQuery = "";
+    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
+    DOM.appSearchInput.value = "";
+    clearPresetButtonStates();
+    logDebug("Scenario", "Scenario reset. Cart is empty, session matcher cleared.", "info");
+  });
+}
 
 function clearPresetButtonStates() {
   if (DOM.presetSamsung) DOM.presetSamsung.classList.remove("active");
@@ -514,7 +527,7 @@ DOM.searchResultsDropdown.addEventListener("click", e => {
       
       // Reset search inputs & dropdown
       DOM.appSearchInput.value = "";
-      DOM.simSearchInput.value = "";
+      if (DOM.simSearchInput) DOM.simSearchInput.value = "";
       activeSearchQuery = "";
       DOM.searchResultsDropdown.style.display = "none";
     }
@@ -530,29 +543,33 @@ document.addEventListener("click", e => {
 });
 
 // Search Simulation click (Desktop side control)
-DOM.btnSearchSim.addEventListener("click", () => {
-  const query = DOM.simSearchInput.value;
-  activeSearchQuery = query.trim();
-  DOM.appSearchInput.value = query; // Sync with mobile search input
-  
-  updateSearchDropdown(query);
+if (DOM.btnSearchSim) {
+  DOM.btnSearchSim.addEventListener("click", () => {
+    const query = DOM.simSearchInput.value;
+    activeSearchQuery = query.trim();
+    DOM.appSearchInput.value = query; // Sync with mobile search input
+    
+    updateSearchDropdown(query);
 
-  if (activeSearchQuery) {
-    logDebug("SearchSim", `Simulated search query via control panel: "${activeSearchQuery}"`, "info");
-  } else {
-    logDebug("SearchSim", "Search input cleared.", "info");
-  }
-  
-  // Re-run matching pipeline
-  runAIRecommendationEngine(cart.getSummary());
-});
+    if (activeSearchQuery) {
+      logDebug("SearchSim", `Simulated search query via control panel: "${activeSearchQuery}"`, "info");
+    } else {
+      logDebug("SearchSim", "Search input cleared.", "info");
+    }
+    
+    // Re-run matching pipeline
+    runAIRecommendationEngine(cart.getSummary());
+  });
+}
 
 // Search input Enter key trigger
-DOM.simSearchInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    DOM.btnSearchSim.click();
-  }
-});
+if (DOM.simSearchInput) {
+  DOM.simSearchInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      DOM.btnSearchSim.click();
+    }
+  });
+}
 
 // Place Order (Instant Pass-Through)
 DOM.btnPlaceOrder.addEventListener("click", () => {
@@ -565,7 +582,7 @@ DOM.btnPlaceOrder.addEventListener("click", () => {
     cart.clear();
     matcher.resetSession();
     clearPresetButtonStates();
-    DOM.simSearchInput.value = "";
+    if (DOM.simSearchInput) DOM.simSearchInput.value = "";
     DOM.appSearchInput.value = "";
   }, 1000);
 });
