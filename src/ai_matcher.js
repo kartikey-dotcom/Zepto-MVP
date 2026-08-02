@@ -1,84 +1,149 @@
 // Zepto AI Cross-Category Assistant - Direct Companion & Multi-Category Logic Engine
 
-// Direct Companion Matrix (Key = Non-Grocery Item ID or Keyword)
+function getSmartTechCompanion(item) {
+  const name = (item.name || "").toLowerCase();
+  
+  // If item is an ADAPTER or CHARGER -> Recommend a Fast Cable!
+  if (name.includes("adapter") || name.includes("charger") || name.includes("power adapter") || name.includes("wall charger")) {
+    return {
+      id: "rec_cable_100w",
+      product_name: "Mi Braided 100W USB-C to USB-C Tough Cable (1.5m)",
+      category: "Electronics & Accessories",
+      price: 199,
+      mrp: 399,
+      image: "🔌",
+      contextual_bridge: `🔌 Pair with your ${item.name} for 45W Super Fast Charging 2.0 speed!`,
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
+      trust_shield: {
+        spec_summary: "100W PD Output | E-Marker Chip | 5A Current | 1.5m Kevlar Braided",
+        dark_store_status: "Verified in Stock at Dark Store #204",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+        return_policy_summary: "Rider swaps incompatible or damaged cable instantly at doorstep."
+      }
+    };
+  }
+
+  // If item is a CABLE or USB WIRE -> Recommend an Adapter!
+  if (name.includes("cable") || name.includes("wire") || name.includes("cord") || name.includes("usb-c")) {
+    return {
+      id: "rec_tech_101",
+      product_name: "PowerPulse 25W Super Fast Wall Adapter",
+      category: "Electronics & Accessories",
+      price: 399,
+      mrp: 699,
+      image: "🔌",
+      contextual_bridge: `⚡ Pair with your ${item.name} for maximum 25W PD Charging speed.`,
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
+      trust_shield: {
+        spec_summary: "25W PD Output | Type-C Port | Surge Protection",
+        dark_store_status: "Verified in Stock at Dark Store #204",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+        return_policy_summary: "No hassle returns. Rider swaps defective items instantly at doorstep."
+      }
+    };
+  }
+
+  return null;
+}
+
+// Direct Companion Matrix
 const DIRECT_COMPANION_MATRIX = {
-  // Dough Kneader / Kitchen Appliances
+  // Dough Kneader -> Kneading Mat
   "hku_001": {
     id: "rec_mat_001",
-    name: "Silicone Non-Stick Dough & Roti Kneading Mat",
+    product_name: "Silicone Non-Stick Dough & Roti Kneading Mat",
+    category: "Home & Kitchen Utilities",
     price: 199,
     mrp: 399,
     image: "🫓",
-    benefit_text: "Keep countertops clean & dough fresh!",
-    specs: "Food Grade Silicone | Non-Slip Surface | Easy Wash"
+    contextual_bridge: "Keep countertops clean & dough fresh!",
+    trust_badges: [
+      "🛡️ 10-Min Doorstep Swap",
+      "✅ 100% Brand Authentic"
+    ],
+    trust_shield: {
+      spec_summary: "Food Grade Silicone | Non-Slip Surface | Easy Wash",
+      dark_store_status: "Verified in Stock at Dark Store #204",
+      return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+      return_policy_summary: "No hassle returns. Rider swaps defective items instantly at doorstep."
+    }
   },
   "rec_home_105": {
     id: "rec_mat_001",
-    name: "Silicone Non-Stick Dough & Roti Kneading Mat",
+    product_name: "Silicone Non-Stick Dough & Roti Kneading Mat",
+    category: "Home & Kitchen Utilities",
     price: 199,
     mrp: 399,
     image: "🫓",
-    benefit_text: "Keep countertops clean & dough fresh!",
-    specs: "Food Grade Silicone | Non-Slip Surface | Easy Wash"
+    contextual_bridge: "Keep countertops clean & dough fresh!",
+    trust_badges: [
+      "🛡️ 10-Min Doorstep Swap",
+      "✅ 100% Brand Authentic"
+    ],
+    trust_shield: {
+      spec_summary: "Food Grade Silicone | Non-Slip Surface | Easy Wash",
+      dark_store_status: "Verified in Stock at Dark Store #204",
+      return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+      return_policy_summary: "No hassle returns. Rider swaps defective items instantly at doorstep."
+    }
   },
-  // Cables / Tech / Chargers
-  "ng_tech_2": {
-    id: "rec_tech_101",
-    name: "PowerPulse 25W Fast Wall Adapter",
-    price: 399,
-    mrp: 699,
-    image: "🔌",
-    benefit_text: "Pair with a 20W adapter for maximum charging speed",
-    specs: "20W PD Output | Type-C Port | Surge Protection"
-  },
-  "g8": {
-    id: "rec_tech_101",
-    name: "PowerPulse 25W Fast Wall Adapter",
-    price: 399,
-    mrp: 699,
-    image: "🔌",
-    benefit_text: "Pair with a 20W adapter for maximum charging speed",
-    specs: "20W PD Output | Type-C Port | Surge Protection"
-  },
-  // Face Wash / Cleanser / Skincare
+  // Face Wash -> Sunscreen
   "pcb_002": {
     id: "rec_beauty_111",
-    name: "The Derma Co 1% Hyaluronic Sunscreen Aqua Gel",
+    product_name: "The Derma Co 1% Hyaluronic Sunscreen Aqua Gel",
+    category: "Personal Care & Beauty",
     price: 349,
     mrp: 499,
     image: "🧴",
-    benefit_text: "Lock in hydration post-cleansing",
-    specs: "SPF 50 PA++++ | 1% Hyaluronic Acid | Non-Greasy"
+    contextual_bridge: "Lock in hydration post-cleansing",
+    trust_badges: [
+      "🛡️ 10-Min Doorstep Swap",
+      "✅ 100% Brand Authentic"
+    ],
+    trust_shield: {
+      spec_summary: "SPF 50 PA++++ | 1% Hyaluronic Acid | Non-Greasy",
+      dark_store_status: "Verified in Stock at Dark Store #204",
+      return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+      return_policy_summary: "No hassle returns. Rider swaps defective items instantly at doorstep."
+    }
   },
-  "ng_beauty_1": {
-    id: "pcb_002",
-    name: "CeraVe Hydrating Facial Cleanser 236ml",
-    price: 750,
-    mrp: 899,
-    image: "🧴",
-    benefit_text: "Cleanse skin gently before applying sunscreen",
-    specs: "Essential Ceramides 1, 3, 6-II | Fragrance-Free"
-  },
-  // Binge Snacks / Chips
+  // Snacks -> Wet Wipes
   "g7": {
     id: "rec_hygiene_109",
-    name: "Himalaya Gentle Wet Wipes (15s Pack)",
+    product_name: "Himalaya Gentle Wet Wipes (15s Pack)",
+    category: "Hygiene & Care",
     price: 49,
     mrp: 60,
     image: "🧼",
-    benefit_text: "Keep hands & controller grease-free",
-    specs: "100% Alcohol-Free | Aloe Vera Enriched | 15 Wipes"
+    contextual_bridge: "Keep hands & controller grease-free",
+    trust_badges: [
+      "🛡️ 10-Min Doorstep Swap",
+      "✅ 100% Brand Authentic"
+    ],
+    trust_shield: {
+      spec_summary: "100% Alcohol-Free | Aloe Vera Enriched | 15 Wipes",
+      dark_store_status: "Verified in Stock at Dark Store #204",
+      return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+      return_policy_summary: "No hassle returns. Rider swaps defective items instantly at doorstep."
+    }
   }
 };
 
 function getDirectAccessoryByKeyword(nonGroceryItem) {
   const text = (nonGroceryItem.name + " " + (nonGroceryItem.category || "")).toLowerCase();
   
+  // Check smart tech pairing first (Adapter -> Cable, Cable -> Adapter)
+  const techCompanion = getSmartTechCompanion(nonGroceryItem);
+  if (techCompanion) return techCompanion;
+
   if (text.includes("kneader") || text.includes("cooker") || text.includes("pan") || text.includes("kettle")) {
     return DIRECT_COMPANION_MATRIX["hku_001"];
-  }
-  if (text.includes("cable") || text.includes("usb") || text.includes("phone") || text.includes("charger")) {
-    return DIRECT_COMPANION_MATRIX["ng_tech_2"];
   }
   if (text.includes("cleanser") || text.includes("face wash") || text.includes("serum")) {
     return DIRECT_COMPANION_MATRIX["pcb_002"];
@@ -91,16 +156,43 @@ function getDirectAccessoryByKeyword(nonGroceryItem) {
 
 const FRICTION_SOLVING_PAIRS = [
   {
-    category: "Samsung Electronics",
-    triggerKeywords: ["samsung", "galaxy", "25w", "fast charger"],
+    category: "Tech Adapter",
+    triggerKeywords: ["adapter", "charger", "wall charger", "fast charger", "45w", "25w"],
+    recommendation: {
+      id: "rec_cable_100w",
+      product_name: "Mi Braided 100W USB-C to USB-C Tough Cable (1.5m)",
+      category: "Electronics & Accessories",
+      price: 199,
+      mrp: 399,
+      image: "🔌",
+      contextual_bridge: "🔌 Pair with your Adapter for 45W Super Fast Charging 2.0 speed!",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
+      trust_shield: {
+        spec_summary: "100W PD Output | E-Marker Chip | 5A Current | 1.5m Kevlar Braided",
+        dark_store_status: "Verified in Stock at Dark Store #204",
+        return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
+        return_policy_summary: "Rider swaps incompatible or damaged cable instantly at doorstep."
+      }
+    }
+  },
+  {
+    category: "Tech Cable",
+    triggerKeywords: ["cable", "usb cord", "wire", "type-c cable"],
     recommendation: {
       id: "rec_tech_101",
       product_name: "PowerPulse 25W Super Fast Adapter",
       category: "Electronics & Accessories",
-      price: 899,
-      mrp: 1299,
+      price: 399,
+      mrp: 699,
       image: "🔌",
-      contextual_bridge: "✅ 100% Verified for your device — 25W PD Fast Charging with Overheating Protection.",
+      contextual_bridge: "⚡ Pair with your USB Cable — 25W PD Fast Charger with Overheating Protection.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "25W PD Output | USB Type-C Port | Surge & Overheat Protection",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -120,6 +212,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 1900,
       image: "🔌",
       contextual_bridge: "✅ Apple Certified 20W PD Output for iPhone 12/13/14/15 Fast Charging.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "20W PD Output | Apple Lightning & Type-C Compatible | BIS Certified",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -139,6 +235,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 1999,
       image: "🔋",
       contextual_bridge: "🔋 Charge your wireless earbuds up to 8x on the go with 18W Fast Charging.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "10000mAh Lithium Polymer | 18W Dual Output | 12-Layer Circuit Protection",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -158,6 +258,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 399,
       image: "🖱️",
       contextual_bridge: "🖱️ Ultra-smooth non-slip surface to prevent wrist fatigue & optical mouse lag.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "Anti-Fray Stitched Edges | Non-Slip Rubber Base | Washable Fabric",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -177,6 +281,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 2499,
       image: "🥣",
       contextual_bridge: "Kneading flour by hand? Knead smooth roti dough in 60s with zero countertop mess.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "3L Food Grade Stainless Steel | 350W Copper Motor | Easy Clean",
         dark_store_status: "Quality Checked & Verified in Stock at Dark Store #204",
@@ -196,6 +304,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 499,
       image: "🫙",
       contextual_bridge: "🌾 Keep your kitchen staples 100% moisture-free & pest-protected in airtight containers.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "BPA-Free Food Grade Plastic | Airtight Silicone Seal | Stackable 6 Pack",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -215,6 +327,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 499,
       image: "🫓",
       contextual_bridge: "🍳 Protect kitchen counters & chop veggies with zero countertop stains.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "Heat Resistant Silicone | Measurement Markings | Easy Washable",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -234,6 +350,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 1150,
       image: "🧴",
       contextual_bridge: "🫖 Keep tea & coffee scalding hot for 24 hours while commuting.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "1L Capacity | 18/8 Stainless Steel | 24 Hours Hot & Cold Insulation",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -253,6 +373,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 220,
       image: "🧼",
       contextual_bridge: "Eating chips? Pack of 72 Wet Wipes to keep your hands and screens grease-free.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "100% Alcohol-Free | Hypoallergenic Aloe Vera | 72 Extra Moist Wipes",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -272,6 +396,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 2490,
       image: "🔊",
       contextual_bridge: "🎶 Pair your chilled drinks & snacks with 10H continuous party audio.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "5W RMS HD Sound | 10 Hours Playtime | IPX7 Sweat & Splashproof",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -291,6 +419,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 599,
       image: "🧴",
       contextual_bridge: "Dermatologically tested daily sunscreen to lock in moisture after washing.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "SPF 50 PA++++ | 1% Hyaluronic Acid | Zero White Cast & Non-Greasy",
         dark_store_status: "Dermatologically Tested & Verified at Dark Store #204",
@@ -310,6 +442,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 350,
       image: "🧴",
       contextual_bridge: "👶 Soothe diaper friction & keep infant skin velvety soft 24/7.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "Olive Oil & Almond Oil enriched | Hypoallergenic | Paraben Free",
         dark_store_status: "Pediatrician Tested & Verified at Dark Store #204",
@@ -329,6 +465,10 @@ const FRICTION_SOLVING_PAIRS = [
       mrp: 320,
       image: "🦴",
       contextual_bridge: "🦴 Satisfy your dog's natural chew instinct while protecting teeth & gums.",
+      trust_badges: [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ],
       trust_shield: {
         spec_summary: "100% Rawhide Chews | High Protein | Reduces Tartar & Plaque Build-Up",
         dark_store_status: "Verified in Stock at Dark Store #204",
@@ -371,23 +511,23 @@ export class ZeptoAIMatcher {
 
     // --- MULTI-CATEGORY CASE (OPTION B) ---
     if (hasGrocery && nonGroceryItem) {
-      const directAccessory = DIRECT_COMPANION_MATRIX[nonGroceryItem.id] || getDirectAccessoryByKeyword(nonGroceryItem);
+      const directAccessory = getSmartTechCompanion(nonGroceryItem) || DIRECT_COMPANION_MATRIX[nonGroceryItem.id] || getDirectAccessoryByKeyword(nonGroceryItem);
 
       if (directAccessory && !cartSummary.itemIds.includes(directAccessory.id)) {
         return {
           recommendation_required: true,
           recommendation: {
             id: directAccessory.id,
-            product_name: directAccessory.name,
+            product_name: directAccessory.product_name || directAccessory.name,
             price: directAccessory.price,
             mrp: directAccessory.mrp,
             image: directAccessory.image || "✨",
-            contextual_bridge: `Pair with your ${nonGroceryItem.name}: ${directAccessory.benefit_text}`,
-            trust_badges: [
+            contextual_bridge: directAccessory.contextual_bridge || `Pair with your ${nonGroceryItem.name}: ${directAccessory.benefit_text}`,
+            trust_badges: directAccessory.trust_badges || [
               "🛡️ 10-Min Doorstep Swap",
               "✅ 100% Brand Authentic"
             ],
-            trust_shield: {
+            trust_shield: directAccessory.trust_shield || {
               spec_summary: directAccessory.specs,
               dark_store_status: "Verified in Stock at Dark Store #204",
               return_policy_title: "10-Minute Instant Doorstep Replacement Guarantee",
@@ -428,6 +568,17 @@ export class ZeptoAIMatcher {
     const lastItem = lastCartEntry ? lastCartEntry.item : null;
 
     let selectedPair = null;
+
+    // Check smart tech companion first (Adapter -> Cable, Cable -> Adapter)
+    if (lastItem) {
+      const techComp = getSmartTechCompanion(lastItem);
+      if (techComp && !isAlreadyInCart(techComp)) {
+        return {
+          status: "success",
+          recommendation: techComp
+        };
+      }
+    }
 
     // 1. MATCH LATEST ADDED CART ITEM
     if (lastItem) {
@@ -478,7 +629,7 @@ export class ZeptoAIMatcher {
           mrp: rec.mrp,
           image: rec.image,
           contextual_bridge: rec.contextual_bridge,
-          trust_badges: [
+          trust_badges: rec.trust_badges || [
             "🛡️ 10-Min Doorstep Swap",
             "✅ 100% Brand Authentic"
           ],

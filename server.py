@@ -169,7 +169,27 @@ class ZeptoAPIRequestHandler(SimpleHTTPRequestHandler):
                 ng_name = str(non_grocery_item.get("name", "")).lower()
                 ng_id = str(non_grocery_item.get("id", ""))
 
-                if "kneader" in ng_name or "hku_001" in ng_id:
+                if "adapter" in ng_name or "charger" in ng_name:
+                    self.send_json_response({
+                        "recommendation_required": True,
+                        "recommendation": {
+                            "id": "rec_cable_100w",
+                            "product_name": "Mi Braided 100W USB-C to USB-C Tough Cable (1.5m)",
+                            "price": 199,
+                            "mrp": 399,
+                            "contextual_bridge": f"🔌 Pair with your {non_grocery_item.get('name')}: 100W Fast Charging & 5A current support",
+                            "trust_badges": [
+                                "🛡️ 10-Min Doorstep Swap",
+                                "✅ 100% Brand Authentic"
+                            ],
+                            "trust_shield": {
+                                "spec_summary": "100W PD Output | E-Marker Chip | 5A Current | 1.5m Kevlar Braided",
+                                "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
+                            }
+                        }
+                    })
+                    return
+                elif "kneader" in ng_name or "hku_001" in ng_id:
                     self.send_json_response({
                         "recommendation_required": True,
                         "recommendation": {
