@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickShop — Cart Drawer AI Assistant MVP</title>
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <div class="container">
+    
+    <!-- LEFT PANEL: TEST CONTROLLER & DEBUGS -->
+    <div class="control-panel">
+      <div class="panel-header">
+        <h1>QuickShop AI Assistant</h1>
+        <p>Interactive MVP Testing Panel & Context Simulation</p>
+      </div>
+
+      <!-- Presets / Quick Carts -->
+      <div class="panel-section">
+        <h2>1. Simulators (User Presets)</h2>
+        <div class="preset-grid">
+          <button class="btn-preset" id="preset-samsung">
+            <span>📱</span> Samsung Charger Preset (₹1499)
+          </button>
+          <button class="btn-preset" id="preset-breakfast">
+            <span>🥛</span> Tech Refill Preset (Breakfast)
+          </button>
+          <button class="btn-preset" id="preset-dinner">
+            <span>🧴</span> Cosmetics Routine Preset (Veggies)
+          </button>
+          <button class="btn-preset" id="preset-party">
+            <span>🥤</span> Late Night Snacks Preset
+          </button>
+          <button class="btn-preset" id="btn-clear-scenario">
+            <span>❌</span> Reset Scenario (Empty Cart)
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Query Simulator -->
+      <div class="panel-section">
+        <h2>2. Active Search Intent</h2>
+        <div class="search-wrapper">
+          <input type="text" id="sim-search-input" class="search-input" placeholder="e.g. charger, sunscreen, pedigree...">
+          <button id="btn-search-sim" class="btn-search">Simulate Search</button>
+        </div>
+      </div>
+
+      <!-- Quick Add Catalog items -->
+      <div class="panel-section">
+        <h2>3. Catalog Quick Add</h2>
+        <div class="catalog-list" id="quick-catalog-list">
+          <!-- Catalog items will be injected by JS -->
+        </div>
+      </div>
+
+      <!-- Realtime Engine Diagnostics -->
+      <div class="panel-section">
+        <h2>4. Live AI Diagnostics Console</h2>
+        <div class="debug-console" id="debug-log-box">
+          <div class="debug-title">
+            <span>AI MATCHING ENGINE LOGS</span>
+            <span style="color: #ff9f43;" id="debug-timestamp">01:54:36</span>
+          </div>
+          <div id="debug-messages">
+            [System] Waiting for cart items to trigger AI processor...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: PHONE FRAME SIMULATOR -->
+    <div class="simulator-pane">
+      
+      <!-- Toast Alert Notification -->
+      <div class="toast-notif" id="cart-toast-notif">Item added to cart!</div>
+
+      <div class="phone-shell">
+        <div class="phone-notch"></div>
+        
+        <!-- Status Bar -->
+        <div class="phone-status-bar">
+          <span id="phone-time">01:54</span>
+          <span class="phone-icons">📶 🔋 100%</span>
+        </div>
+
+        <!-- Simulated App Screen -->
+        <div class="app-screen">
+          
+          <!-- Header (QuickShop) -->
+          <div class="app-header">
+            <div class="header-title">
+              <h3>QuickShop</h3>
+              <span>⚡ Delivering in 10 mins</span>
+            </div>
+            <div class="cart-icon">🛒</div>
+          </div>
+
+           <!-- App In-Flow Search Bar -->
+           <div class="app-search-container" style="position: relative; z-index: 50;">
+             <div class="app-search-bar">
+               <span class="search-icon">🔍</span>
+               <input type="text" id="app-search-input" placeholder="Search for products...">
+             </div>
+             <!-- Search Dropdown Results -->
+             <div class="search-results-dropdown" id="search-results-dropdown" style="display: none;"></div>
+           </div>
+
+          <!-- Main Scroll Content -->
+          <div class="cart-scroll-area" id="phone-cart-scroll">
+            
+            <!-- Empty state placeholder -->
+            <div class="empty-state" id="cart-empty-view">
+              <div class="empty-icon">🛒</div>
+              <h3>Your cart is empty</h3>
+              <p style="font-size: 12px; margin-top: 4px;">Add items using the Quick Add panel on the left to start testing.</p>
+            </div>
+
+            <!-- Cart Section Header (Your Cart & Clear Cart) -->
+            <div class="cart-section-header" id="cart-section-header" style="display: none;">
+              <h4>Your Cart</h4>
+              <span class="clear-cart-link" id="clear-cart-link">Clear Cart</span>
+            </div>
+
+            <!-- Active Cart Products Wrapper -->
+            <div class="cart-items-container" id="cart-items-list" style="display: none;">
+              <!-- Dynamic list of items in the cart -->
+            </div>
+
+            <!-- EMBEDDED NON-INTRUSIVE AI ASSISTANT CARD -->
+            <div class="ai-surface-container" id="ai-suggestion-nudge">
+              <div class="ai-surface-card" id="ai-nudge-card">
+                <div class="ai-badge-row">
+                  <div class="ai-badge-left">
+                    <div class="ai-icon-circle">✨</div>
+                    <span class="ai-title-text">AI Assistant</span>
+                  </div>
+                  <div class="ai-chevron">➔</div>
+                </div>
+                <div class="ai-nudge-hook" id="ai-recommendation-text">
+                  This adapter is perfect for your Charger. Adding it now ensures you're ready to power up!
+                </div>
+                <div class="ai-product-suggestion">
+                  <span class="ai-prod-icon" id="ai-item-icon">🔌</span>
+                  <div class="ai-prod-details">
+                    <span class="ai-prod-name" id="ai-item-name">PowerPulse 25W Adapter</span>
+                    <div class="ai-prod-price-row">
+                      <span class="ai-prod-price" id="ai-item-price">₹899</span>
+                    </div>
+                  </div>
+                  <div class="ai-prod-action">View Details</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bill Details block -->
+            <div class="bill-container" id="cart-bill-view" style="display: none;">
+              <h4>Bill Details</h4>
+              <div class="bill-row">
+                <span class="bill-label">Item Total</span>
+                <span class="bill-value" id="bill-subtotal">₹0</span>
+              </div>
+              <div class="bill-row">
+                <span class="bill-label">Delivery Partner Fee</span>
+                <span class="bill-value" id="bill-delivery-fee">₹25</span>
+              </div>
+              <div class="bill-divider"></div>
+              <div class="bill-row grand-total">
+                <span class="bill-label">To Pay</span>
+                <span class="bill-value" id="bill-grand-total">₹30</span>
+              </div>
+            </div>
+            
+          </div>
+
+          <!-- Statically Positioned Checkout Drawer Footer -->
+          <div class="checkout-bar" id="cart-action-bar" style="display: none;">
+            <div class="checkout-left-summary">
+              <span class="checkout-total-price" id="checkout-total-price">₹1499</span>
+              <span class="btn-view-bill" id="btn-view-bill">VIEW BILL</span>
+            </div>
+            <button class="btn-place-order" id="btn-place-order">
+              <span>Proceed to Pay</span> ➔
+            </button>
+          </div>
+
+          <!-- BOTTOM SLIDE-UP SPEC PREVIEW SHEET -->
+          <div class="preview-sheet-overlay" id="spec-sheet-overlay">
+            <div class="preview-sheet">
+              <div class="sheet-handle"></div>
+              
+              <!-- Sheet Header -->
+              <div class="sheet-header">
+                <div class="sheet-prod-info">
+                  <div class="sheet-prod-icon" id="sheet-item-icon">🔌</div>
+                  <div class="sheet-prod-title">
+                    <h3 id="sheet-item-name">PowerPulse 25W Adapter</h3>
+                    <span>Price: <strong style="color: var(--text-dark);" id="sheet-item-price">₹899</strong></span>
+                  </div>
+                </div>
+                <button class="btn-close-sheet" id="btn-close-spec-sheet">✕</button>
+              </div>
+
+              <!-- Inventory & Replacement Badges -->
+              <div class="sheet-badges">
+                <span class="badge-stock">✓ In Stock (Local Dark Store)</span>
+                <span class="badge-guarantee">🛡️ 10-Min Doorstep Return/Exch</span>
+              </div>
+
+              <!-- Product Specifications Details -->
+              <div class="sheet-specs-section">
+                <h4>Product Specifications</h4>
+                <div class="specs-table" id="sheet-specs-table">
+                  <!-- Specs rows injected by JS -->
+                </div>
+              </div>
+
+              <!-- Add CTA -->
+              <button class="btn-add-action" id="btn-sheet-add-cart">Add to Cart & Checkout</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
