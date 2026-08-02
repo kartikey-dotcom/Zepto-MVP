@@ -1,0 +1,73 @@
+MVP Product Brief for Antigravity: Zepto AI Cross-Category Assistant
+1. Target Segment & Problem Statement
+Target Segment (Stalled Non-Grocery Shoppers): Daily Zepto users who rely on the app for fast grocery refills, but default to Amazon or Nykaa for personal care, electronics, and household items because evaluating non-grocery items on Zepto feels risky and lacks necessary details.
+
+The Core Problem: Zepto's UI is optimized for a 30-second grocery routine ("Speed Mode"). As a result, users systematically tune out homepage promotional banners (Banner Blindness) and silently exit the app whenever a non-grocery item requires technical verification, compatibility checks, or return assurances.
+
+The MVP Goal: Build the Zepto AI Cross-Category Assistant—a non-intrusive, real-time contextual intelligence engine integrated directly into the cart and checkout flow. It bridges daily grocery routines with relevant items across the broader catalog (Electronics, Personal Care, Household Utilities, Home) while delivering instant specification and compatibility reassurance in under 2 seconds.
+
+2. Illustrative Scenario Examples (Non-Rigid Reference Points)
+The engine should be built dynamically so it can evaluate any cross-category pair across the catalog. Below are three example scenarios to guide engine logic and testing:
+
+Example A: Tech & Electronics Verification
+Cart Input: USB-A / Type-C Charging Cable or Power Adapter.
+
+AI Engine Action: Passively reads active context / device details to render a 2-second Compatibility Verdict ("✅ 100% Verified for your device — Fast Charging Supported") or a Smart Mismatch Warning ("⚠️ Note: Your device requires a Type-C to Type-C adapter instead").
+
+Example B: Kitchen & Household Utilities
+Cart Input: Aashirvaad Atta / Bulk Staple Grocery.
+
+AI Engine Action: Identifies physical effort/prep friction and surfaces a functional utility companion ("Electric Dough Kneader | ₹499 — Kneads 5kg dough in 60s" or "Non-Stick Silicone Kneading Mat | ₹199").
+
+Example C: Personal Care & Hygiene
+Cart Input: Doritos / Binge Snacks.
+
+AI Engine Action: Identifies post-snack physical friction and surfaces a hygiene utility companion ("Pack of 15 Wet Wipes | ₹49 — Keeps hands & gaming controllers grease-free").
+
+3. Core Functional Features & User Flow
+[User Builds Grocery / General Cart] 
+        ↓
+[AI Engine Scans Active Basket Context in Real-Time]
+        ↓
+[1-Line Native In-Cart Recommendation Chip Rendered Above Checkout]
+        ↓
+(Optional) [User Taps Chip → 1-Tap Specs & Trust Preview Sheet] ➔ [1-Tap Add to Cart]
+In-Cart Contextual Engine:
+
+Scans active basket items, category tags, time of order, and past buying context.
+
+Matches items dynamically across non-grocery catalog categories.
+
+Native In-Cart Recommendation Chip:
+
+Sits natively inside the Cart Drawer directly above the "Place Order / Pay" button.
+
+Displays a 1-line contextual bridge connecting the basket item to a relevant utility/non-grocery product.
+
+1-Tap Spec & Reassurance Sheet:
+
+Tapping the chip opens a lightweight preview sheet without taking the user out of the cart.
+
+Displays: Specs in 3 Seconds, Local Dark Store Stock Verification, and 10-Minute Doorstep Replacement Guarantee.
+
+1-Tap Direct Add:
+
+Adds the suggested item into the active cart with zero page reloads.
+
+4. Strict UX Guardrails (Zero-Forced Friction)
+To prevent the feature from feeling like aggressive or intrusive upselling:
+
+Zero Pop-Ups / Overlays: No full-screen modals or roadblocks that interrupt payment.
+
+Strict 1-Nudge Limit: Display a maximum of one AI recommendation per checkout session.
+
+No Auto-Add: Products must never be added automatically to the user's cart.
+
+Instant Pass-Through: Users can place their order immediately without taking any action to dismiss the chip.
+
+5. Success Metrics for the MVP
+Cross-Category Conversion Rate: % of grocery-only carts that convert into mixed-category orders via the AI chip.
+
+Average Order Value (AOV): Total basket value increase driven by non-grocery additions.
+
+Search Bounce Reduction: Lower exit rate on high-consideration non-grocery product pages.

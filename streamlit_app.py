@@ -8,12 +8,20 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Title & Description for the Streamlit dashboard wrapper
-st.title("QuickShop AI Cross-Category Assistant MVP")
+# Remove default Streamlit top padding & margins so the app fits cleanly at the top
 st.markdown("""
-This Streamlit dashboard hosts the high-fidelity **QuickShop Cart Drawer AI Assistant** simulation.
-Search for products directly in the mobile search bar above the cart (e.g. *Samsung*, *Milk*, *Bread*, *Tomatoes*) to add items and test real-time AI cross-category recommendations.
-""")
+<style>
+    .block-container {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+    }
+    header {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
 
 def get_bundled_html():
     # File paths
@@ -62,7 +70,7 @@ def get_bundled_html():
 try:
     html_content = get_bundled_html()
     # Serve the iframe container natively with scrollbars enabled
-    st.components.v1.html(html_content, height=840, scrolling=True)
+    st.components.v1.html(html_content, height=860, scrolling=True)
 except Exception as e:
     st.error(f"Error bundling project assets: {e}")
     st.info("Make sure index.html and src/ folder files are in the same directory.")
