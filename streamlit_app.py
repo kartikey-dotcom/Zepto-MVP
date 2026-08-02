@@ -3,7 +3,7 @@ import os
 import streamlit as st
 
 st.set_page_config(
-    page_title="QuickShop AI Assistant MVP",
+    page_title="Zepto — 10-Minute Grocery & Instant Delivery",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -29,6 +29,8 @@ def get_bundled_html():
     index_path = os.path.join(base_dir, "index.html")
     css_path = os.path.join(base_dir, "src", "style.css")
     catalog_path = os.path.join(base_dir, "src", "catalog.js")
+    catalog_json_path = os.path.join(base_dir, "src", "catalog.json")
+    search_engine_path = os.path.join(base_dir, "src", "search_engine.js")
     cart_path = os.path.join(base_dir, "src", "cart.js")
     matcher_path = os.path.join(base_dir, "src", "ai_matcher.js")
     app_path = os.path.join(base_dir, "src", "app.js")
@@ -42,25 +44,34 @@ def get_bundled_html():
         css = f.read()
     html = html.replace('<link rel="stylesheet" href="./src/style.css">', f"<style>{css}</style>")
 
-    # Read JS components
+    # Read JS components & catalog json
     with open(catalog_path, "r", encoding="utf-8") as f:
         catalog_js = f.read().replace("export ", "")
+
+    with open(catalog_json_path, "r", encoding="utf-8") as f:
+        catalog_seed_json = f.read()
+
+    with open(search_engine_path, "r", encoding="utf-8") as f:
+        search_engine_js = f.read().replace("export ", "")
+        search_engine_js = re.sub(
+            r'import\s+catalogSeed\s+from\s+["\'][^"\']+["\'](?:\s+assert\s+{[^}]+})?;?',
+            'const catalogSeed = ' + catalog_seed_json + ';',
+            search_engine_js
+        )
 
     with open(cart_path, "r", encoding="utf-8") as f:
         cart_js = f.read().replace("export ", "")
 
     with open(matcher_path, "r", encoding="utf-8") as f:
-        # Strip import statement from matcher
         matcher_js = f.read().replace("export ", "")
         matcher_js = re.sub(r'import\s+{[^}]+}\s+from\s+["\'][^"\']+["\'];?', '', matcher_js)
 
     with open(app_path, "r", encoding="utf-8") as f:
         app_js = f.read()
-        # Strip import statements from main app script
         app_js = re.sub(r'import\s+{[^}]+}\s+from\s+["\'][^"\']+["\'];?', '', app_js)
 
     # Bundle all JS elements into a single execution block
-    bundled_js = f"{catalog_js}\n{cart_js}\n{matcher_js}\n{app_js}"
+    bundled_js = f"{catalog_js}\n{search_engine_js}\n{cart_js}\n{matcher_js}\n{app_js}"
     
     # Inject bundled scripts into index.html
     html = html.replace('<script type="module" src="./src/app.js"></script>', f'<script type="module">{bundled_js}</script>')

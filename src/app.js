@@ -2,15 +2,17 @@
 import { GROCERY_ITEMS, NON_GROCERY_CATALOG } from "./catalog.js";
 import { ZeptoCart } from "./cart.js";
 import { ZeptoAIMatcher } from "./ai_matcher.js";
+import { executeSearch } from "./search_engine.js";
 
 // Initialize core modules
 const cart = new ZeptoCart();
 const matcher = new ZeptoAIMatcher({ stockVerificationRequired: true });
 
-// Track active search query context
+// Track active search query context & current search results
 let activeSearchQuery = "";
 let currentRecommendation = null;
 let activeCategory = "All";
+let currentSearchResults = [];
 
 // --- DOM Cache ---
 const DOM = {
@@ -181,7 +183,7 @@ function renderCart(summary) {
     const row = document.createElement("div");
     row.className = "cart-item-row";
     row.innerHTML = `
-      <div class="item-visual">${entry.item.image}</div>
+      <div class="item-visual">${entry.item.image || "📦"}</div>
       <div class="item-details">
         <span class="item-title">${entry.item.name}</span>
         <span class="item-subtitle">₹${entry.item.price} • ${entry.item.unit || "1 Unit"}</span>
@@ -261,7 +263,7 @@ function runAIRecommendationEngine(summary) {
     const recItem = recommendation.item;
 
     DOM.aiRecommendationText.textContent = recommendation.hook;
-    DOM.aiItemIcon.textContent = recItem.image;
+    DOM.aiItemIcon.textContent = recItem.image || "🔌";
     DOM.aiItemName.textContent = recItem.name;
     DOM.aiItemPrice.textContent = `₹${recItem.price}`;
 
@@ -286,7 +288,7 @@ function openPreviewSheet(recommendation) {
   if (!recommendation) return;
   const item = recommendation.item;
 
-  DOM.sheetItemIcon.textContent = item.image;
+  DOM.sheetItemIcon.textContent = item.image || "🔌";
   DOM.sheetItemName.textContent = item.name;
   DOM.sheetItemPrice.textContent = `₹${item.price}`;
 
@@ -301,6 +303,15 @@ function openPreviewSheet(recommendation) {
       `;
       DOM.sheetSpecsTable.appendChild(row);
     });
+  } else if (item.ai_verified_badge) {
+    const row1 = document.createElement("div");
+    row1.className = "spec-item";
+    row1.innerHTML = `<span class="spec-name">Verification</span><span class="spec-value">${item.ai_verified_badge.status}</span>`;
+    const row2 = document.createElement("div");
+    row2.className = "spec-item";
+    row2.innerHTML = `<span class="spec-name">Trust Tag</span><span class="spec-value">${item.ai_verified_badge.trust_tag}</span>`;
+    DOM.sheetSpecsTable.appendChild(row1);
+    DOM.sheetSpecsTable.appendChild(row2);
   }
 
   DOM.specSheetOverlay.classList.add("active");
@@ -333,42 +344,48 @@ if (DOM.btnSheetAddCart) {
   });
 }
 
-// --- In-Flow Search Dropdown Logic ---
+// --- Universal Search Engine & Wildcard Dropdown Logic ---
 function updateSearchDropdown(query) {
-  const cleanQuery = query.trim().toLowerCase();
+  const cleanQuery = query.trim();
   if (cleanQuery.length === 0) {
     if (DOM.searchResultsDropdown) DOM.searchResultsDropdown.style.display = "none";
+    currentSearchResults = [];
     return;
   }
 
-  const groceryMatches = GROCERY_ITEMS.filter(item => 
-    item.name.toLowerCase().includes(cleanQuery) || 
-    (item.tags && item.tags.some(t => t.includes(cleanQuery)))
-  );
-  
-  const nonGroceryMatches = NON_GROCERY_CATALOG.filter(item => 
-    item.name.toLowerCase().includes(cleanQuery) ||
-    (item.trigger_rule && item.trigger_rule.search_intent.some(term => term.includes(cleanQuery)))
-  );
+  const response = executeSearch(cleanQuery);
+  currentSearchResults = response.results || [];
 
-  const allMatches = [...groceryMatches, ...nonGroceryMatches];
   DOM.searchResultsDropdown.innerHTML = "";
 
-  if (allMatches.length === 0) {
+  if (currentSearchResults.length === 0) {
     const row = document.createElement("div");
     row.className = "no-results-row";
     row.textContent = "No matching products found.";
     DOM.searchResultsDropdown.appendChild(row);
   } else {
-    allMatches.forEach(item => {
+    // Search source header badge (Seed dataset vs Wildcard fallback)
+    const headerRow = document.createElement("div");
+    headerRow.className = "search-source-header";
+    headerRow.innerHTML = response.source === "wildcard_generator" 
+      ? `<span class="source-badge wildcard">✨ AI Instant Match (Wildcard)</span>`
+      : `<span class="source-badge seed">⚡ 10-MIN Catalog (${response.count} items)</span>`;
+    DOM.searchResultsDropdown.appendChild(headerRow);
+
+    currentSearchResults.forEach(item => {
       const row = document.createElement("div");
       row.className = "search-result-row";
       row.innerHTML = `
         <div class="search-result-info">
-          <div class="search-result-icon">${item.image}</div>
+          <div class="search-result-icon">${item.image || "📦"}</div>
           <div class="search-result-details">
             <span class="search-result-name">${item.name}</span>
-            <span class="search-result-price">₹${item.price}</span>
+            <div class="search-result-price-row">
+              <span class="search-result-price">₹${item.price}</span>
+              ${item.mrp ? `<span class="search-result-mrp">₹${item.mrp}</span>` : ""}
+              <span class="search-result-delivery">⚡ 10 mins</span>
+            </div>
+            ${item.ai_verified_badge ? `<span class="search-ai-badge">${item.ai_verified_badge.status}</span>` : ""}
           </div>
         </div>
         <button class="btn-add-search-result" data-id="${item.id}">+ ADD</button>
@@ -399,10 +416,10 @@ if (DOM.searchResultsDropdown) {
     if (e.target.classList.contains("btn-add-search-result")) {
       const id = e.target.getAttribute("data-id");
       
-      let item = GROCERY_ITEMS.find(g => g.id === id);
-      if (!item) {
-        item = NON_GROCERY_CATALOG.find(ng => ng.id === id);
-      }
+      // Look up item in current search results, or catalogs
+      let item = currentSearchResults.find(i => i.id === id);
+      if (!item) item = GROCERY_ITEMS.find(g => g.id === id);
+      if (!item) item = NON_GROCERY_CATALOG.find(ng => ng.id === id);
       
       if (item) {
         cart.addItem(item, 1);
