@@ -12,7 +12,7 @@ st.set_page_config(
 st.title("QuickShop AI Cross-Category Assistant MVP")
 st.markdown("""
 This Streamlit dashboard hosts the high-fidelity **QuickShop Cart Drawer AI Assistant** simulation.
-Use the presets in the left panel of the simulator to test matching logic or type in the mobile search bar to add items.
+Search for products directly in the mobile search bar above the cart (e.g. *Samsung*, *Milk*, *Bread*, *Tomatoes*) to add items and test real-time AI cross-category recommendations.
 """)
 
 def get_bundled_html():
