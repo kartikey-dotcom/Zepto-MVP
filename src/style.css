@@ -397,10 +397,10 @@ body {
 }
 
 .ai-surface-card {
-  background: var(--zepto-purple-soft);
-  border: 1px solid var(--zepto-purple-soft-border);
-  border-radius: 16px;
-  padding: 12px 14px;
+  background: #FAF4FF;
+  border: 1px solid #E5D5FB;
+  border-radius: 12px;
+  padding: 12px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -494,14 +494,43 @@ body {
   color: var(--text-muted);
 }
 
-.ai-prod-action {
-  font-size: 11px;
+.ai-prod-action-btn {
+  font-size: 11.5px;
   font-weight: 700;
-  color: var(--zepto-green);
-  border: 1px solid var(--zepto-green);
-  padding: 4px 8px;
-  border-radius: 6px;
+  color: white;
+  background: var(--zepto-green);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ai-prod-action-btn:hover {
+  background: #009650;
+}
+
+/* Bottom Row: Inline 0-Click Micro-Trust Pills */
+.ai-micro-trust-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #F0E6FF;
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+.micro-trust-pill {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--zepto-purple-dark);
   background: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #EFE8F8;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* ==========================================

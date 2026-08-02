@@ -52,6 +52,8 @@ const DOM = {
   aiItemIcon: document.getElementById("ai-item-icon"),
   aiItemName: document.getElementById("ai-item-name"),
   aiItemPrice: document.getElementById("ai-item-price"),
+  aiTrustPillsRow: document.getElementById("ai-trust-pills-row"),
+  btnAiCardAdd: document.getElementById("btn-ai-card-add"),
 
   // Fast Preview Sheet Drawer
   specSheetOverlay: document.getElementById("spec-sheet-overlay"),
@@ -273,6 +275,14 @@ function runAIRecommendationEngine(summary) {
     DOM.aiItemName.textContent = rec.product_name || rec.name;
     DOM.aiItemPrice.textContent = `₹${rec.price}`;
 
+    if (DOM.aiTrustPillsRow) {
+      const badges = rec.trust_badges || [
+        "🛡️ 10-Min Doorstep Swap",
+        "✅ 100% Brand Authentic"
+      ];
+      DOM.aiTrustPillsRow.innerHTML = badges.map(b => `<span class="micro-trust-pill">${b}</span>`).join("");
+    }
+
     DOM.aiSuggestionNudge.style.display = "block";
     logDebug("AI Engine", `Nudge card displayed: ${rec.product_name}`, "matcher");
   } else {
@@ -302,7 +312,7 @@ function openPreviewSheet(recommendationResponse) {
 
   if (DOM.trustSpecSummary) DOM.trustSpecSummary.textContent = trust.spec_summary || "100% Quality & Compatibility Checked for 10-Min Delivery";
   if (DOM.trustDarkStoreText) DOM.trustDarkStoreText.textContent = trust.dark_store_status || "Verified in Stock at Dark Store #204";
-  if (DOM.trustReturnTitle) DOM.trustReturnTitle.textContent = trust.return_policy_title || "10-Minute Doorstep Replacement Guarantee";
+  if (DOM.trustReturnTitle) DOM.trustReturnTitle.textContent = trust.return_policy_title || "10-Minute Instant Doorstep Replacement Guarantee";
   if (DOM.trustReturnSummary) DOM.trustReturnSummary.textContent = trust.return_policy_summary || "No hassle returns. Rider swaps defective items instantly at doorstep.";
 
   DOM.specSheetOverlay.classList.add("active");
@@ -316,6 +326,27 @@ function closePreviewSheet() {
 if (DOM.aiSuggestionNudge) {
   DOM.aiSuggestionNudge.addEventListener("click", () => {
     openPreviewSheet(currentRecommendation);
+  });
+}
+
+if (DOM.btnAiCardAdd) {
+  DOM.btnAiCardAdd.addEventListener("click", e => {
+    e.stopPropagation(); // Prevent opening preview sheet overlay when tapping + ADD
+    if (currentRecommendation) {
+      const rec = currentRecommendation.recommendation || currentRecommendation.item || currentRecommendation;
+      const cartItem = {
+        id: rec.id,
+        name: rec.product_name || rec.name,
+        price: rec.price,
+        mrp: rec.mrp,
+        image: rec.image || "✨",
+        unit: "1 Unit",
+        category: rec.category
+      };
+      cart.addItem(cartItem, 1);
+      showToast(`Added ${cartItem.name} to cart!`);
+      logDebug("Cart", `Added card suggestion: ${cartItem.name} (₹${cartItem.price})`, "success");
+    }
   });
 }
 

@@ -176,7 +176,12 @@ class ZeptoAPIRequestHandler(SimpleHTTPRequestHandler):
                             "id": "rec_mat_001",
                             "product_name": "Silicone Non-Stick Dough & Roti Kneading Mat",
                             "price": 199,
+                            "mrp": 399,
                             "contextual_bridge": f"Pair with your {non_grocery_item.get('name')}: Keep countertops clean & dough fresh!",
+                            "trust_badges": [
+                                "🛡️ 10-Min Doorstep Swap",
+                                "✅ 100% Brand Authentic"
+                            ],
                             "trust_shield": {
                                 "spec_summary": "Food Grade Silicone | Non-Slip Surface | Easy Wash",
                                 "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
@@ -189,9 +194,14 @@ class ZeptoAPIRequestHandler(SimpleHTTPRequestHandler):
                         "recommendation_required": True,
                         "recommendation": {
                             "id": "rec_tech_101",
-                            "product_name": "PowerPulse 25W Fast Wall Adapter",
+                            "product_name": "PowerPulse 20W Fast Wall Adapter",
                             "price": 399,
+                            "mrp": 699,
                             "contextual_bridge": f"Pair with your {non_grocery_item.get('name')}: Pair with a 20W adapter for maximum charging speed",
+                            "trust_badges": [
+                                "🛡️ 10-Min Doorstep Swap",
+                                "✅ 100% Brand Authentic"
+                            ],
                             "trust_shield": {
                                 "spec_summary": "20W PD Output | Type-C Port | Surge Protection",
                                 "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
@@ -211,11 +221,18 @@ class ZeptoAPIRequestHandler(SimpleHTTPRequestHandler):
                     "id": "rec_tech_101",
                     "product_name": "PowerPulse 25W Super Fast Adapter",
                     "price": 899,
+                    "mrp": 1499,
                     "contextual_bridge": "✅ 100% Verified for your device — 25W PD Fast Charging with Overheating Protection.",
+                    "trust_badges": [
+                        "🛡️ 10-Min Doorstep Swap",
+                        "✅ 100% Brand Authentic"
+                    ],
                     "trust_shield": {
                         "spec_summary": "25W PD Output | USB Type-C Port | Surge & Overheat Protection",
                         "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
                     }
+                }
+            })}
                 }
             })
             return

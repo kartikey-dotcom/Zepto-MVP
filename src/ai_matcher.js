@@ -383,6 +383,10 @@ export class ZeptoAIMatcher {
             mrp: directAccessory.mrp,
             image: directAccessory.image || "✨",
             contextual_bridge: `Pair with your ${nonGroceryItem.name}: ${directAccessory.benefit_text}`,
+            trust_badges: [
+              "🛡️ 10-Min Doorstep Swap",
+              "✅ 100% Brand Authentic"
+            ],
             trust_shield: {
               spec_summary: directAccessory.specs,
               dark_store_status: "Verified in Stock at Dark Store #204",
@@ -474,6 +478,10 @@ export class ZeptoAIMatcher {
           mrp: rec.mrp,
           image: rec.image,
           contextual_bridge: rec.contextual_bridge,
+          trust_badges: [
+            "🛡️ 10-Min Doorstep Swap",
+            "✅ 100% Brand Authentic"
+          ],
           trust_shield: rec.trust_shield
         }
       };
