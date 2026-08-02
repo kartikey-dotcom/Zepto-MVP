@@ -270,10 +270,8 @@ function runAIRecommendationEngine(summary) {
     DOM.aiSuggestionNudge.style.display = "block";
     logDebug("AI Engine", `Nudge card displayed: ${recItem.name}`, "matcher");
   } else {
-    if (!matcher.lockedRecommendation) {
-      DOM.aiSuggestionNudge.style.display = "none";
-      currentRecommendation = null;
-    }
+    if (DOM.aiSuggestionNudge) DOM.aiSuggestionNudge.style.display = "none";
+    currentRecommendation = null;
   }
 }
 
