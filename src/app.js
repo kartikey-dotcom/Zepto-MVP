@@ -59,8 +59,13 @@ const DOM = {
   sheetItemIcon: document.getElementById("sheet-item-icon"),
   sheetItemName: document.getElementById("sheet-item-name"),
   sheetItemPrice: document.getElementById("sheet-item-price"),
-  sheetSpecsTable: document.getElementById("sheet-specs-table"),
   btnSheetAddCart: document.getElementById("btn-sheet-add-cart"),
+
+  // Trust & Reassurance Shield elements
+  trustSpecSummary: document.getElementById("trust-spec-summary"),
+  trustDarkStoreText: document.getElementById("trust-dark-store-text"),
+  trustReturnTitle: document.getElementById("trust-return-title"),
+  trustReturnSummary: document.getElementById("trust-return-summary"),
 
   // Toast
   cartToastNotif: document.getElementById("cart-toast-notif")
@@ -185,7 +190,7 @@ function renderCart(summary) {
     row.innerHTML = `
       <div class="item-visual">${entry.item.image || "📦"}</div>
       <div class="item-details">
-        <span class="item-title">${entry.item.name}</span>
+        <span class="item-title">${entry.item.name || entry.item.product_name}</span>
         <span class="item-subtitle">₹${entry.item.price} • ${entry.item.unit || "1 Unit"}</span>
       </div>
       <div class="item-row-right">
@@ -224,14 +229,14 @@ if (DOM.cartItemsList) {
       const entry = cart.items.find(entry => entry.item.id === id);
       if (entry) {
         cart.updateQuantity(id, entry.quantity + 1);
-        logDebug("Cart", `Incremented quantity of ${entry.item.name}`);
+        logDebug("Cart", `Incremented quantity of ${entry.item.name || entry.item.product_name}`);
       }
     } else if (e.target.classList.contains("btn-minus")) {
       const id = e.target.getAttribute("data-id");
       const entry = cart.items.find(entry => entry.item.id === id);
       if (entry) {
         cart.updateQuantity(id, entry.quantity - 1);
-        logDebug("Cart", `Decremented quantity of ${entry.item.name}`);
+        logDebug("Cart", `Decremented quantity of ${entry.item.name || entry.item.product_name}`);
       }
     }
   });
@@ -256,19 +261,19 @@ function runAIRecommendationEngine(summary) {
     return;
   }
 
-  const recommendation = matcher.getRecommendation(summary, activeSearchQuery);
+  const response = matcher.getRecommendation(summary, activeSearchQuery);
 
-  if (recommendation) {
-    currentRecommendation = recommendation;
-    const recItem = recommendation.item;
+  if (response && response.recommendation) {
+    currentRecommendation = response;
+    const rec = response.recommendation;
 
-    DOM.aiRecommendationText.textContent = recommendation.hook;
-    DOM.aiItemIcon.textContent = recItem.image || "🔌";
-    DOM.aiItemName.textContent = recItem.name;
-    DOM.aiItemPrice.textContent = `₹${recItem.price}`;
+    DOM.aiRecommendationText.textContent = rec.contextual_bridge;
+    DOM.aiItemIcon.textContent = rec.image || "🔌";
+    DOM.aiItemName.textContent = rec.product_name || rec.name;
+    DOM.aiItemPrice.textContent = `₹${rec.price}`;
 
     DOM.aiSuggestionNudge.style.display = "block";
-    logDebug("AI Engine", `Nudge card displayed: ${recItem.name}`, "matcher");
+    logDebug("AI Engine", `Nudge card displayed: ${rec.product_name}`, "matcher");
   } else {
     if (DOM.aiSuggestionNudge) DOM.aiSuggestionNudge.style.display = "none";
     currentRecommendation = null;
@@ -281,39 +286,24 @@ cart.subscribe(summary => {
   runAIRecommendationEngine(summary);
 });
 
-// --- 1-Tap Fast Spec Sheet Drawer ---
-function openPreviewSheet(recommendation) {
-  if (!recommendation) return;
-  const item = recommendation.item;
+// --- 1-Tap Fast Spec & Trust Preview Sheet Drawer ---
+function openPreviewSheet(recommendationResponse) {
+  if (!recommendationResponse) return;
+  
+  const rec = recommendationResponse.recommendation || recommendationResponse.item || recommendationResponse;
+  const trust = rec.trust_shield || {};
 
-  DOM.sheetItemIcon.textContent = item.image || "🔌";
-  DOM.sheetItemName.textContent = item.name;
-  DOM.sheetItemPrice.textContent = `₹${item.price}`;
+  DOM.sheetItemIcon.textContent = rec.image || "🔌";
+  DOM.sheetItemName.textContent = rec.product_name || rec.name;
+  DOM.sheetItemPrice.textContent = `₹${rec.price}`;
 
-  DOM.sheetSpecsTable.innerHTML = "";
-  if (item.specs) {
-    Object.entries(item.specs).forEach(([key, val]) => {
-      const row = document.createElement("div");
-      row.className = "spec-item";
-      row.innerHTML = `
-        <span class="spec-name">${key}</span>
-        <span class="spec-value">${val}</span>
-      `;
-      DOM.sheetSpecsTable.appendChild(row);
-    });
-  } else if (item.ai_verified_badge) {
-    const row1 = document.createElement("div");
-    row1.className = "spec-item";
-    row1.innerHTML = `<span class="spec-name">Verification</span><span class="spec-value">${item.ai_verified_badge.status}</span>`;
-    const row2 = document.createElement("div");
-    row2.className = "spec-item";
-    row2.innerHTML = `<span class="spec-name">Trust Tag</span><span class="spec-value">${item.ai_verified_badge.trust_tag}</span>`;
-    DOM.sheetSpecsTable.appendChild(row1);
-    DOM.sheetSpecsTable.appendChild(row2);
-  }
+  if (DOM.trustSpecSummary) DOM.trustSpecSummary.textContent = trust.spec_summary || "100% Quality & Compatibility Checked for 10-Min Delivery";
+  if (DOM.trustDarkStoreText) DOM.trustDarkStoreText.textContent = trust.dark_store_status || "Verified in Stock at Dark Store #204";
+  if (DOM.trustReturnTitle) DOM.trustReturnTitle.textContent = trust.return_policy_title || "10-Minute Doorstep Replacement Guarantee";
+  if (DOM.trustReturnSummary) DOM.trustReturnSummary.textContent = trust.return_policy_summary || "No hassle returns. Rider swaps defective items instantly at doorstep.";
 
   DOM.specSheetOverlay.classList.add("active");
-  logDebug("PreviewSheet", `Opened specification sheet for: ${item.name}`);
+  logDebug("PreviewSheet", `Opened specification sheet for: ${rec.product_name || rec.name}`);
 }
 
 function closePreviewSheet() {
@@ -333,10 +323,19 @@ if (DOM.btnCloseSpecSheet) {
 if (DOM.btnSheetAddCart) {
   DOM.btnSheetAddCart.addEventListener("click", () => {
     if (currentRecommendation) {
-      const item = currentRecommendation.item;
-      cart.addItem(item, 1);
-      showToast(`Added ${item.name} to cart!`);
-      logDebug("Cart", `Added suggestion: ${item.name} (₹${item.price})`, "success");
+      const rec = currentRecommendation.recommendation || currentRecommendation.item || currentRecommendation;
+      const cartItem = {
+        id: rec.id,
+        name: rec.product_name || rec.name,
+        price: rec.price,
+        mrp: rec.mrp,
+        image: rec.image || "🔌",
+        unit: "1 Unit",
+        category: rec.category
+      };
+      cart.addItem(cartItem, 1);
+      showToast(`Added ${cartItem.name} to cart!`);
+      logDebug("Cart", `Added suggestion: ${cartItem.name} (₹${cartItem.price})`, "success");
       closePreviewSheet();
     }
   });
@@ -362,7 +361,7 @@ function updateSearchDropdown(query) {
     row.textContent = "No matching products found.";
     DOM.searchResultsDropdown.appendChild(row);
   } else {
-    // Search source header badge (Seed dataset vs Wildcard fallback)
+    // Search source header badge
     const headerRow = document.createElement("div");
     headerRow.className = "search-source-header";
     headerRow.innerHTML = response.source === "wildcard_generator" 
@@ -414,7 +413,6 @@ if (DOM.searchResultsDropdown) {
     if (e.target.classList.contains("btn-add-search-result")) {
       const id = e.target.getAttribute("data-id");
       
-      // Look up item in current search results, or catalogs
       let item = currentSearchResults.find(i => i.id === id);
       if (!item) item = GROCERY_ITEMS.find(g => g.id === id);
       if (!item) item = NON_GROCERY_CATALOG.find(ng => ng.id === id);

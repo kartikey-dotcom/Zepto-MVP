@@ -1,6 +1,8 @@
 """
-Zepto MVP - HTTP Server with API Endpoint (GET /api/search?q={query})
-Serves static frontend files and exposes the Universal Search API.
+Zepto MVP - HTTP Server with API Endpoints
+Serves static frontend files and exposes:
+- GET /api/search?q={query}
+- GET /api/recommendation
 """
 
 import os
@@ -58,6 +60,27 @@ class ZeptoAPIRequestHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed_url = urllib.parse.urlparse(self.path)
         
+        # Handle /api/recommendation
+        if parsed_url.path == "/api/recommendation":
+            self.send_json_response({
+                "status": "success",
+                "recommendation": {
+                    "id": "rec_tech_101",
+                    "product_name": "PowerPulse 25W Super Fast Adapter",
+                    "category": "Electronics",
+                    "price": 899,
+                    "mrp": 1299,
+                    "contextual_bridge": "✅ 100% Verified for your device — 25W PD Fast Charging with Overheating Protection.",
+                    "trust_shield": {
+                        "spec_summary": "25W PD Output | USB Type-C Port | Surge & Overheat Protection",
+                        "dark_store_status": "Verified in Stock at Dark Store #204",
+                        "return_policy_title": "10-Minute Doorstep Replacement Guarantee",
+                        "return_policy_summary": "No hassle returns. If defective or incompatible, rider swaps it instantly at your doorstep."
+                    }
+                }
+            })
+            return
+
         # Handle /api/search?q={query}
         if parsed_url.path == "/api/search":
             query_params = urllib.parse.parse_qs(parsed_url.query)

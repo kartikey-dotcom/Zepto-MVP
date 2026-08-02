@@ -89,12 +89,12 @@
                   <div class="ai-chevron">➔</div>
                 </div>
                 <div class="ai-nudge-hook" id="ai-recommendation-text">
-                  This adapter is perfect for your Charger. Adding it now ensures you're ready to power up!
+                  ✅ 100% Verified for your device — 25W PD Fast Charging with Overheating Protection.
                 </div>
                 <div class="ai-product-suggestion">
                   <span class="ai-prod-icon" id="ai-item-icon">🔌</span>
                   <div class="ai-prod-details">
-                    <span class="ai-prod-name" id="ai-item-name">PowerPulse 25W Adapter</span>
+                    <span class="ai-prod-name" id="ai-item-name">PowerPulse 25W Super Fast Adapter</span>
                     <div class="ai-prod-price-row">
                       <span class="ai-prod-price" id="ai-item-price">₹899</span>
                     </div>
@@ -111,7 +111,7 @@
                 <span class="popular-badge">⚡ 10 MINS</span>
               </div>
               <div class="product-grid" id="popular-products-grid">
-                <!-- Injected dynamically or pre-rendered -->
+                <!-- Injected dynamically -->
                 <div class="essential-card" data-id="g8">
                   <div class="essential-icon">📱</div>
                   <div class="essential-info">
@@ -197,7 +197,7 @@
             </button>
           </div>
 
-          <!-- BOTTOM SLIDE-UP SPEC PREVIEW SHEET -->
+          <!-- BOTTOM SLIDE-UP SPEC & TRUST PREVIEW SHEET -->
           <div class="preview-sheet-overlay" id="spec-sheet-overlay">
             <div class="preview-sheet">
               <div class="sheet-handle"></div>
@@ -207,24 +207,36 @@
                 <div class="sheet-prod-info">
                   <div class="sheet-prod-icon" id="sheet-item-icon">🔌</div>
                   <div class="sheet-prod-title">
-                    <h3 id="sheet-item-name">PowerPulse 25W Adapter</h3>
+                    <h3 id="sheet-item-name">PowerPulse 25W Super Fast Adapter</h3>
                     <span>Price: <strong style="color: var(--text-primary);" id="sheet-item-price">₹899</strong></span>
                   </div>
                 </div>
                 <button class="btn-close-sheet" id="btn-close-spec-sheet">✕</button>
               </div>
 
-              <!-- Inventory & Replacement Badges -->
-              <div class="sheet-badges">
-                <span class="badge-stock">✓ In Stock (Local Dark Store)</span>
-                <span class="badge-guarantee">🛡️ 10-Min Doorstep Return/Exch</span>
-              </div>
+              <!-- TRUST & REASSURANCE SHIELD CONTAINER -->
+              <div class="trust-shield-container" id="trust-shield-container">
+                <!-- 1. 2-Second Spec / Compatibility Verdict -->
+                <div class="trust-spec-verdict">
+                  <span class="verdict-icon">⚡</span>
+                  <span class="verdict-text" id="trust-spec-summary">25W PD Output | USB Type-C Port | Surge Protection</span>
+                </div>
 
-              <!-- Product Specifications Details -->
-              <div class="sheet-specs-section">
-                <h4>Product Specifications</h4>
-                <div class="specs-table" id="sheet-specs-table">
-                  <!-- Specs rows injected by JS -->
+                <!-- 2. Dark Store Quality Tag -->
+                <div class="trust-dark-store">
+                  <span class="check-icon">✅</span>
+                  <span id="trust-dark-store-text">Verified in Stock at Dark Store #204</span>
+                </div>
+
+                <!-- 3. 10-Minute Doorstep Replacement Guarantee -->
+                <div class="trust-return-card">
+                  <div class="return-badge-header">
+                    <span class="return-shield-icon">🛡️</span>
+                    <span class="return-title" id="trust-return-title">10-Minute Doorstep Replacement Guarantee</span>
+                  </div>
+                  <p class="return-summary-text" id="trust-return-summary">
+                    No hassle returns. If defective or incompatible, rider swaps it instantly at your doorstep.
+                  </p>
                 </div>
               </div>
 
