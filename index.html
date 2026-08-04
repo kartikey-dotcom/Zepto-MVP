@@ -317,9 +317,65 @@
                   </div>
                 </div>
 
-                <button class="btn-done-checkout" id="btn-done-checkout">
-                  <span>Track Order / Done</span>
+                <div class="pay-actions-row">
+                  <button class="btn-done-checkout" id="btn-done-checkout">
+                    <span>Track Order / Done</span>
+                  </button>
+                  <button class="btn-request-return" id="btn-request-return">
+                    <span>🔄 10-Min Doorstep Swap</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 10-MINUTE INSTANT DOORSTEP RETURN & SWAP OVERLAY -->
+          <div class="return-modal-overlay" id="return-modal-overlay">
+            <div class="return-modal-card">
+              <div class="return-header">
+                <div class="return-title-wrap">
+                  <span class="return-icon-badge">🛡️</span>
+                  <div>
+                    <h3>10-Min Doorstep Return & Swap</h3>
+                    <span class="return-sub">Rider swaps items instantly at your doorstep</span>
+                  </div>
+                </div>
+                <button class="btn-close-return" id="btn-close-return">✕</button>
+              </div>
+
+              <!-- Step A: Form & Item Selection -->
+              <div class="return-form-body" id="return-form-body">
+                <label class="return-section-label">1. Select Return Reason</label>
+                <div class="reason-pills-row" id="reason-pills-row">
+                  <button class="reason-pill active" data-reason="Damaged / Defective">Damaged / Defective ⚠️</button>
+                  <button class="reason-pill" data-reason="Incompatible / Fits Wrong">Incompatible 🔌</button>
+                  <button class="reason-pill" data-reason="Changed Mind">Changed Mind 🔄</button>
+                </div>
+
+                <label class="return-section-label">2. Items in Order <span id="return-order-ref">#ZPT-894210</span></label>
+                <div class="return-items-list" id="return-items-list">
+                  <!-- Injected dynamically -->
+                </div>
+
+                <div class="return-guarantee-note">
+                  <span>⚡ <strong>Zepto 10-Min Guarantee:</strong> Rider brings a fresh replacement or collects pickup at your door with 100% instant refund credit.</span>
+                </div>
+
+                <button class="btn-confirm-return" id="btn-confirm-return">
+                  <span>Confirm 10-Min Doorstep Swap 🛵</span>
                 </button>
+              </div>
+
+              <!-- Step B: Live Dispatch Animation -->
+              <div class="return-dispatch-body" id="return-dispatch-body" style="display: none;">
+                <div class="dispatch-rider-glow">
+                  <span class="dispatch-rider-icon">🛵💨</span>
+                </div>
+                <h3 class="dispatch-title">Rider Dispatched!</h3>
+                <p class="dispatch-sub" id="dispatch-sub-text">Rider #402 is en route to your doorstep for instant swap.</p>
+                <div class="dispatch-eta-pill">⚡ Expected Arrival: <strong>7 Mins</strong></div>
+                <button class="btn-done-return" id="btn-done-return">Close & Track Rider</button>
               </div>
 
             </div>

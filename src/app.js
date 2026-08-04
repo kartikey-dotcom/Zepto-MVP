@@ -13,6 +13,7 @@ let activeSearchQuery = "";
 let currentRecommendation = null;
 let activeCategory = "All";
 let currentSearchResults = [];
+let lastPlacedOrder = null;
 
 // --- DOM Cache ---
 const DOM = {
@@ -79,6 +80,19 @@ const DOM = {
   payOrderId: document.getElementById("pay-order-id"),
   payPaidAmount: document.getElementById("pay-paid-amount"),
   btnDoneCheckout: document.getElementById("btn-done-checkout"),
+  btnRequestReturn: document.getElementById("btn-request-return"),
+
+  // 10-Min Return & Doorstep Swap Drawer Modal
+  returnModalOverlay: document.getElementById("return-modal-overlay"),
+  btnCloseReturn: document.getElementById("btn-close-return"),
+  returnFormBody: document.getElementById("return-form-body"),
+  returnDispatchBody: document.getElementById("return-dispatch-body"),
+  reasonPillsRow: document.getElementById("reason-pills-row"),
+  returnItemsList: document.getElementById("return-items-list"),
+  returnOrderRef: document.getElementById("return-order-ref"),
+  btnConfirmReturn: document.getElementById("btn-confirm-return"),
+  btnDoneReturn: document.getElementById("btn-done-return"),
+  dispatchSubText: document.getElementById("dispatch-sub-text"),
 
   // Toast
   cartToastNotif: document.getElementById("cart-toast-notif")
@@ -526,6 +540,13 @@ if (DOM.btnPlaceOrder) {
       if (DOM.payOrderId) DOM.payOrderId.textContent = orderId;
       if (DOM.payPaidAmount) DOM.payPaidAmount.textContent = `₹${summary.total}`;
 
+      // Save order snapshot for returns
+      lastPlacedOrder = {
+        orderId: orderId,
+        total: summary.total,
+        items: [...summary.items]
+      };
+
       DOM.btnPlaceOrder.classList.remove("loading");
       DOM.btnPlaceOrder.innerHTML = `<span>Proceed to Pay</span> →`;
 
@@ -549,6 +570,89 @@ if (DOM.btnDoneCheckout) {
 
     showToast(`🎉 ${lastOrderId} placed! Arriving in 10 mins`);
     logDebug("Checkout", "Cart cleared and returned to catalog view");
+  });
+}
+
+// --- 10-Min Doorstep Return / Exchange Handlers ---
+let selectedReturnReason = "Damaged / Defective";
+
+if (DOM.reasonPillsRow) {
+  DOM.reasonPillsRow.addEventListener("click", e => {
+    if (e.target.classList.contains("reason-pill")) {
+      DOM.reasonPillsRow.querySelectorAll(".reason-pill").forEach(p => p.classList.remove("active"));
+      e.target.classList.add("active");
+      selectedReturnReason = e.target.getAttribute("data-reason") || "Damaged / Defective";
+      logDebug("Return", `Selected return reason: ${selectedReturnReason}`);
+    }
+  });
+}
+
+if (DOM.btnRequestReturn) {
+  DOM.btnRequestReturn.addEventListener("click", () => {
+    if (!lastPlacedOrder || !lastPlacedOrder.items.length) {
+      showToast("No active order found to return!");
+      return;
+    }
+
+    if (DOM.returnOrderRef) DOM.returnOrderRef.textContent = lastPlacedOrder.orderId;
+
+    // Render items list inside return drawer
+    if (DOM.returnItemsList) {
+      DOM.returnItemsList.innerHTML = lastPlacedOrder.items.map(entry => `
+        <div class="return-item-row">
+          <label>
+            <input type="checkbox" checked value="${entry.item.id}">
+            <span>${entry.item.image || "📦"} ${entry.item.name || entry.item.product_name} (${entry.quantity}x)</span>
+          </label>
+          <strong>₹${entry.item.price * entry.quantity}</strong>
+        </div>
+      `).join("");
+    }
+
+    if (DOM.returnFormBody) DOM.returnFormBody.style.display = "block";
+    if (DOM.returnDispatchBody) DOM.returnDispatchBody.style.display = "none";
+
+    if (DOM.returnModalOverlay) {
+      DOM.returnModalOverlay.classList.add("active");
+    }
+
+    logDebug("Return", `Opened 10-Min Return drawer for order ${lastPlacedOrder.orderId}`);
+  });
+}
+
+if (DOM.btnCloseReturn) {
+  DOM.btnCloseReturn.addEventListener("click", () => {
+    if (DOM.returnModalOverlay) DOM.returnModalOverlay.classList.remove("active");
+  });
+}
+
+if (DOM.btnConfirmReturn) {
+  DOM.btnConfirmReturn.addEventListener("click", () => {
+    const orderId = lastPlacedOrder ? lastPlacedOrder.orderId : "#ZPT";
+
+    if (DOM.returnFormBody) DOM.returnFormBody.style.display = "none";
+    if (DOM.returnDispatchBody) DOM.returnDispatchBody.style.display = "block";
+
+    if (DOM.dispatchSubText) {
+      DOM.dispatchSubText.textContent = `Rider #402 dispatched to your doorstep for '${selectedReturnReason}' exchange.`;
+    }
+
+    showToast(`🛡️ 10-Min Doorstep Swap requested for ${orderId}!`);
+    logDebug("Return", `Confirmed 10-Min Doorstep Swap for order ${orderId} (Reason: ${selectedReturnReason})`, "success");
+  });
+}
+
+if (DOM.btnDoneReturn) {
+  DOM.btnDoneReturn.addEventListener("click", () => {
+    if (DOM.returnModalOverlay) DOM.returnModalOverlay.classList.remove("active");
+    if (DOM.paymentModalOverlay) DOM.paymentModalOverlay.classList.remove("active");
+
+    cart.clear();
+    matcher.resetSession();
+    if (DOM.appSearchInput) DOM.appSearchInput.value = "";
+
+    showToast("🛡️ Rider on the way for doorstep exchange!");
+    logDebug("Return", "Return flow complete. Cart reset.");
   });
 }
 
