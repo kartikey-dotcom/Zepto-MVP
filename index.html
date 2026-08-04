@@ -253,6 +253,78 @@
             </div>
           </div>
 
+          <!-- PAYMENT PROCESSING & ORDER SUCCESS OVERLAY -->
+          <div class="payment-modal-overlay" id="payment-modal-overlay">
+            <div class="payment-modal-card" id="payment-modal-card">
+              
+              <!-- STEP 1: PROCESSING & PACKING -->
+              <div class="pay-step-view" id="pay-step-processing">
+                <div class="pay-spinner-glow">
+                  <div class="pay-pulse-ring"></div>
+                  <span class="pay-glow-icon" id="pay-glow-icon">⚡</span>
+                </div>
+                <h3 class="pay-status-title" id="pay-status-title">Securing Payment...</h3>
+                <p class="pay-status-sub" id="pay-status-sub">Connecting securely with bank gateway</p>
+
+                <!-- Animated Delivery Packing Bar -->
+                <div class="pay-progress-bar-wrap">
+                  <div class="pay-progress-bar-fill" id="pay-progress-fill"></div>
+                </div>
+
+                <div class="pay-delivery-badge">
+                  <span class="pay-rider-icon" id="pay-rider-anim">🚴💨</span>
+                  <span id="pay-packing-text">Zepto 10-Min Express Dark Store #204</span>
+                </div>
+              </div>
+
+              <!-- STEP 2: ORDER CONFIRMED SUCCESS -->
+              <div class="pay-step-view" id="pay-step-success" style="display: none;">
+                <div class="confetti-container">
+                  <span class="confetti c1">🎉</span>
+                  <span class="confetti c2">✨</span>
+                  <span class="confetti c3">⚡</span>
+                  <span class="confetti c4">🌟</span>
+                </div>
+
+                <div class="success-checkmark-circle">
+                  <svg class="checkmark-svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                  </svg>
+                </div>
+
+                <h2 class="order-success-title">Order Placed!</h2>
+                <div class="order-eta-badge">
+                  <span>⚡ Arriving in <strong>10 Mins</strong></span>
+                </div>
+
+                <div class="order-receipt-box">
+                  <div class="receipt-row">
+                    <span>Order ID</span>
+                    <strong id="pay-order-id">#ZPT-894210</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>Amount Paid</span>
+                    <strong id="pay-paid-amount">₹0</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>Delivery Address</span>
+                    <span>B-Block, Sector 62</span>
+                  </div>
+                  <div class="receipt-row dark-store-row">
+                    <span>Assigned Store</span>
+                    <span class="store-tag">Dark Store #204 🏬</span>
+                  </div>
+                </div>
+
+                <button class="btn-done-checkout" id="btn-done-checkout">
+                  <span>Track Order / Done</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
       

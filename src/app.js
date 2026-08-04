@@ -69,6 +69,17 @@ const DOM = {
   trustReturnTitle: document.getElementById("trust-return-title"),
   trustReturnSummary: document.getElementById("trust-return-summary"),
 
+  // Payment Processing & Success Modal
+  paymentModalOverlay: document.getElementById("payment-modal-overlay"),
+  payStepProcessing: document.getElementById("pay-step-processing"),
+  payStepSuccess: document.getElementById("pay-step-success"),
+  payStatusTitle: document.getElementById("pay-status-title"),
+  payStatusSub: document.getElementById("pay-status-sub"),
+  payProgressFill: document.getElementById("pay-progress-fill"),
+  payOrderId: document.getElementById("pay-order-id"),
+  payPaidAmount: document.getElementById("pay-paid-amount"),
+  btnDoneCheckout: document.getElementById("btn-done-checkout"),
+
   // Toast
   cartToastNotif: document.getElementById("cart-toast-notif")
 };
@@ -471,18 +482,73 @@ document.addEventListener("click", e => {
   }
 });
 
-// --- Checkout Placement Hook ---
+// --- Animated Checkout & Payment Placement Pipeline ---
 if (DOM.btnPlaceOrder) {
   DOM.btnPlaceOrder.addEventListener("click", () => {
     const summary = cart.getSummary();
-    showToast("🎉 Order Placed Successfully!");
-    logDebug("Checkout", `Placed order for ₹${summary.total}. Pass-through verification passed successfully.`, "success");
-    
+    if (summary.itemsCount === 0) return;
+
+    // 1. Initial State Setup
+    DOM.btnPlaceOrder.classList.add("loading");
+    DOM.btnPlaceOrder.innerHTML = `<span>Processing...</span> ⚡`;
+
+    if (DOM.payStepProcessing) DOM.payStepProcessing.style.display = "block";
+    if (DOM.payStepSuccess) DOM.payStepSuccess.style.display = "none";
+    if (DOM.payProgressFill) DOM.payProgressFill.style.width = "0%";
+    if (DOM.payStatusTitle) DOM.payStatusTitle.textContent = "Securing Payment...";
+    if (DOM.payStatusSub) DOM.payStatusSub.textContent = "Connecting securely with bank gateway";
+
+    // Show modal overlay
+    if (DOM.paymentModalOverlay) {
+      DOM.paymentModalOverlay.classList.add("active");
+    }
+
+    logDebug("Checkout", `Initiated animated payment flow for ₹${summary.total}`, "info");
+
+    // 2. Stage 1: Payment Authorization (1.2s)
     setTimeout(() => {
-      cart.clear();
-      matcher.resetSession();
-      if (DOM.appSearchInput) DOM.appSearchInput.value = "";
-    }, 1200);
+      if (DOM.payProgressFill) DOM.payProgressFill.style.width = "45%";
+    }, 200);
+
+    // 3. Stage 2: Express Dark Store Packing (1.4s mark)
+    setTimeout(() => {
+      if (DOM.payStatusTitle) DOM.payStatusTitle.textContent = "Payment Verified! ⚡";
+      if (DOM.payStatusSub) DOM.payStatusSub.textContent = "Packing at Dark Store #204 & Assigning Rider";
+      if (DOM.payProgressFill) DOM.payProgressFill.style.width = "100%";
+    }, 1400);
+
+    // 4. Stage 3: Order Confirmed Screen (2.5s mark)
+    setTimeout(() => {
+      if (DOM.payStepProcessing) DOM.payStepProcessing.style.display = "none";
+      if (DOM.payStepSuccess) DOM.payStepSuccess.style.display = "block";
+
+      const orderId = `#ZPT-${Math.floor(100000 + Math.random() * 900000)}`;
+      if (DOM.payOrderId) DOM.payOrderId.textContent = orderId;
+      if (DOM.payPaidAmount) DOM.payPaidAmount.textContent = `₹${summary.total}`;
+
+      DOM.btnPlaceOrder.classList.remove("loading");
+      DOM.btnPlaceOrder.innerHTML = `<span>Proceed to Pay</span> →`;
+
+      logDebug("Checkout", `Order ${orderId} confirmed successfully for ₹${summary.total}`, "success");
+    }, 2500);
+  });
+}
+
+// Close order success modal & clear cart on Track Order / Done click
+if (DOM.btnDoneCheckout) {
+  DOM.btnDoneCheckout.addEventListener("click", () => {
+    const lastOrderId = DOM.payOrderId ? DOM.payOrderId.textContent : "#ZPT";
+    
+    if (DOM.paymentModalOverlay) {
+      DOM.paymentModalOverlay.classList.remove("active");
+    }
+
+    cart.clear();
+    matcher.resetSession();
+    if (DOM.appSearchInput) DOM.appSearchInput.value = "";
+
+    showToast(`🎉 ${lastOrderId} placed! Arriving in 10 mins`);
+    logDebug("Checkout", "Cart cleared and returned to catalog view");
   });
 }
 
