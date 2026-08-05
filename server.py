@@ -252,8 +252,6 @@ class ZeptoAPIRequestHandler(SimpleHTTPRequestHandler):
                         "return_policy_title": "10-Minute Instant Doorstep Replacement Guarantee"
                     }
                 }
-            })}
-                }
             })
             return
 
